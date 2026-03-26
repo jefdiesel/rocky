@@ -9,20 +9,31 @@ const router = Router();
 const META_API = 'https://graph.facebook.com/v19.0';
 const SCOPES = 'ads_management,ads_read,pages_read_engagement,business_management';
 
+// In-memory + DB state store for CSRF (serverless-safe)
+const pendingStates = new Map();
+
 // ── GET /auth/meta — Redirect to Meta OAuth ──────────────────────────────────
-router.get('/meta', (req, res) => {
+router.get('/meta', async (req, res) => {
   const appId = process.env.META_APP_ID;
   if (!appId) {
     return res.status(503).json({ error: 'Meta OAuth is not configured (META_APP_ID missing).' });
   }
 
   const state = crypto.randomBytes(32).toString('hex');
+  const expiresAt = Date.now() + 10 * 60 * 1000;
 
-  // Store CSRF state in a cookie (httpOnly, 10 min expiry)
+  // Store state in memory (works if same instance) and cookie (fallback)
+  pendingStates.set(state, expiresAt);
+
+  // Also store in Supabase for serverless where instances differ
+  if (supabase) {
+    await supabase.from('oauth_states').upsert({ state, expires_at: new Date(expiresAt).toISOString() }).catch(() => {});
+  }
+
   res.cookie('oauth_state', state, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: true,
+    sameSite: 'none',
     maxAge: 10 * 60 * 1000,
   });
 
@@ -48,11 +59,31 @@ router.get('/meta/callback', async (req, res) => {
       return res.status(400).json({ error: 'Missing authorization code from Meta.' });
     }
 
-    if (!state || state !== savedState) {
-      return res.status(403).json({ error: 'CSRF state mismatch. Please try logging in again.' });
+    // Check state: cookie first, then in-memory, then Supabase
+    let stateValid = false;
+    if (state && state === savedState) {
+      stateValid = true;
+    } else if (state && pendingStates.has(state) && pendingStates.get(state) > Date.now()) {
+      stateValid = true;
+      pendingStates.delete(state);
+    } else if (state && supabase) {
+      const { data } = await supabase
+        .from('oauth_states')
+        .select('state')
+        .eq('state', state)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+      if (data) {
+        stateValid = true;
+        await supabase.from('oauth_states').delete().eq('state', state).catch(() => {});
+      }
     }
 
-    // Clear the state cookie
+    if (!stateValid) {
+      const clientUrl = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+      return res.redirect(`${clientUrl}/auth/callback?error=CSRF+state+mismatch.+Please+try+again.`);
+    }
+
     res.clearCookie('oauth_state');
 
     const appId = process.env.META_APP_ID;
