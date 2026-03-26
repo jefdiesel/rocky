@@ -1,0 +1,38 @@
+[
+  {
+    "id": "pixel_9001",
+    "account_id": "act_1001",
+    "name": "Acme Corp - Main Pixel",
+    "code": "<script>!function(f,b,e,v,n,t,s){...}('pixel_9001')</script>",
+    "creation_time": "2025-06-15T10:00:00-0500",
+    "is_unavailable": false,
+    "last_fired_time": "2026-03-25T23:58:12-0500",
+    "owner_ad_account": { "account_id": "act_1001", "id": "act_1001" },
+    "events": [
+      { "event_name": "PageView", "count_last_7d": 1250000, "count_last_28d": 4800000, "match_rate": 0.62 },
+      { "event_name": "ViewContent", "count_last_7d": 320000, "count_last_28d": 1200000, "match_rate": 0.58 },
+      { "event_name": "AddToCart", "count_last_7d": 42000, "count_last_28d": 165000, "match_rate": 0.71 },
+      { "event_name": "InitiateCheckout", "count_last_7d": 18500, "count_last_28d": 72000, "match_rate": 0.74 },
+      { "event_name": "Purchase", "count_last_7d": 8200, "count_last_28d": 31500, "match_rate": 0.78 },
+      { "event_name": "Lead", "count_last_7d": 3100, "count_last_28d": 12400, "match_rate": 0.65 }
+    ]
+  },
+  {
+    "id": "pixel_9002",
+    "account_id": "act_1003",
+    "name": "Brand X DTC - Pixel",
+    "code": "<script>!function(f,b,e,v,n,t,s){...}('pixel_9002')</script>",
+    "creation_time": "2025-09-01T08:00:00-0800",
+    "is_unavailable": false,
+    "last_fired_time": "2026-03-25T23:55:44-0800",
+    "owner_ad_account": { "account_id": "act_1003", "id": "act_1003" },
+    "events": [
+      { "event_name": "PageView", "count_last_7d": 890000, "count_last_28d": 3400000, "match_rate": 0.55 },
+      { "event_name": "ViewContent", "count_last_7d": 215000, "count_last_28d": 825000, "match_rate": 0.52 },
+      { "event_name": "AddToCart", "count_last_7d": 28500, "count_last_28d": 110000, "match_rate": 0.68 },
+      { "event_name": "InitiateCheckout", "count_last_7d": 12200, "count_last_28d": 47000, "match_rate": 0.72 },
+      { "event_name": "Purchase", "count_last_7d": 5400, "count_last_28d": 20800, "match_rate": 0.76 },
+      { "event_name": "Lead", "count_last_7d": 1800, "count_last_28d": 7200, "match_rate": 0.60 }
+    ]
+  }
+]

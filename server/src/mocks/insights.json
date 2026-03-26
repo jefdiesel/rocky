@@ -1,0 +1,121 @@
+[
+  {
+    "campaign_id": "camp_2001",
+    "campaign_name": "US - Spring Sale Traffic",
+    "daily": [
+      {"date_start":"2026-02-24","date_stop":"2026-02-24","spend":"87.50","impressions":"24500","clicks":"490","ctr":"2.00","cpm":"3.57","cpc":"0.18","reach":"19600","frequency":"1.25","conversions":"12","cost_per_conversion":"7.29","purchase_roas":"2.80"},
+      {"date_start":"2026-02-25","date_stop":"2026-02-25","spend":"102.30","impressions":"31200","clicks":"624","ctr":"2.00","cpm":"3.28","cpc":"0.16","reach":"25000","frequency":"1.25","conversions":"15","cost_per_conversion":"6.82","purchase_roas":"3.10"},
+      {"date_start":"2026-02-26","date_stop":"2026-02-26","spend":"95.10","impressions":"28700","clicks":"517","ctr":"1.80","cpm":"3.31","cpc":"0.18","reach":"22960","frequency":"1.25","conversions":"11","cost_per_conversion":"8.65","purchase_roas":"2.50"},
+      {"date_start":"2026-02-27","date_stop":"2026-02-27","spend":"110.40","impressions":"35100","clicks":"702","ctr":"2.00","cpm":"3.14","cpc":"0.16","reach":"28080","frequency":"1.25","conversions":"18","cost_per_conversion":"6.13","purchase_roas":"3.40"},
+      {"date_start":"2026-02-28","date_stop":"2026-02-28","spend":"88.20","impressions":"25600","clicks":"461","ctr":"1.80","cpm":"3.45","cpc":"0.19","reach":"20480","frequency":"1.25","conversions":"10","cost_per_conversion":"8.82","purchase_roas":"2.30"},
+      {"date_start":"2026-03-01","date_stop":"2026-03-01","spend":"125.00","impressions":"42000","clicks":"840","ctr":"2.00","cpm":"2.98","cpc":"0.15","reach":"33600","frequency":"1.25","conversions":"22","cost_per_conversion":"5.68","purchase_roas":"3.80"},
+      {"date_start":"2026-03-02","date_stop":"2026-03-02","spend":"143.50","impressions":"48900","clicks":"978","ctr":"2.00","cpm":"2.93","cpc":"0.15","reach":"39120","frequency":"1.25","conversions":"25","cost_per_conversion":"5.74","purchase_roas":"3.70"},
+      {"date_start":"2026-03-03","date_stop":"2026-03-03","spend":"131.20","impressions":"44100","clicks":"882","ctr":"2.00","cpm":"2.97","cpc":"0.15","reach":"35280","frequency":"1.25","conversions":"20","cost_per_conversion":"6.56","purchase_roas":"3.20"},
+      {"date_start":"2026-03-04","date_stop":"2026-03-04","spend":"118.60","impressions":"38700","clicks":"697","ctr":"1.80","cpm":"3.06","cpc":"0.17","reach":"30960","frequency":"1.25","conversions":"16","cost_per_conversion":"7.41","purchase_roas":"2.90"},
+      {"date_start":"2026-03-05","date_stop":"2026-03-05","spend":"139.80","impressions":"46500","clicks":"930","ctr":"2.00","cpm":"3.01","cpc":"0.15","reach":"37200","frequency":"1.25","conversions":"24","cost_per_conversion":"5.83","purchase_roas":"3.60"},
+      {"date_start":"2026-03-06","date_stop":"2026-03-06","spend":"152.40","impressions":"50800","clicks":"1016","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"40640","frequency":"1.25","conversions":"28","cost_per_conversion":"5.44","purchase_roas":"4.00"},
+      {"date_start":"2026-03-07","date_stop":"2026-03-07","spend":"148.90","impressions":"49600","clicks":"992","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"39680","frequency":"1.25","conversions":"26","cost_per_conversion":"5.73","purchase_roas":"3.80"},
+      {"date_start":"2026-03-08","date_stop":"2026-03-08","spend":"127.30","impressions":"42400","clicks":"848","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"33920","frequency":"1.25","conversions":"19","cost_per_conversion":"6.70","purchase_roas":"3.30"},
+      {"date_start":"2026-03-09","date_stop":"2026-03-09","spend":"115.60","impressions":"38500","clicks":"693","ctr":"1.80","cpm":"3.00","cpc":"0.17","reach":"30800","frequency":"1.25","conversions":"14","cost_per_conversion":"8.26","purchase_roas":"2.60"},
+      {"date_start":"2026-03-10","date_stop":"2026-03-10","spend":"162.00","impressions":"54000","clicks":"1080","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"43200","frequency":"1.25","conversions":"30","cost_per_conversion":"5.40","purchase_roas":"4.20"},
+      {"date_start":"2026-03-11","date_stop":"2026-03-11","spend":"171.50","impressions":"57200","clicks":"1144","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"45760","frequency":"1.25","conversions":"35","cost_per_conversion":"4.90","purchase_roas":"4.50"},
+      {"date_start":"2026-03-12","date_stop":"2026-03-12","spend":"158.30","impressions":"52800","clicks":"1056","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"42240","frequency":"1.25","conversions":"29","cost_per_conversion":"5.46","purchase_roas":"4.10"},
+      {"date_start":"2026-03-13","date_stop":"2026-03-13","spend":"145.70","impressions":"48600","clicks":"972","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"38880","frequency":"1.25","conversions":"23","cost_per_conversion":"6.33","purchase_roas":"3.50"},
+      {"date_start":"2026-03-14","date_stop":"2026-03-14","spend":"134.40","impressions":"44800","clicks":"806","ctr":"1.80","cpm":"3.00","cpc":"0.17","reach":"35840","frequency":"1.25","conversions":"17","cost_per_conversion":"7.91","purchase_roas":"2.80"},
+      {"date_start":"2026-03-15","date_stop":"2026-03-15","spend":"178.20","impressions":"59400","clicks":"1188","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"47520","frequency":"1.25","conversions":"38","cost_per_conversion":"4.69","purchase_roas":"4.80"},
+      {"date_start":"2026-03-16","date_stop":"2026-03-16","spend":"189.50","impressions":"63200","clicks":"1264","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"50560","frequency":"1.25","conversions":"42","cost_per_conversion":"4.51","purchase_roas":"5.00"},
+      {"date_start":"2026-03-17","date_stop":"2026-03-17","spend":"195.00","impressions":"65000","clicks":"1300","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"52000","frequency":"1.25","conversions":"45","cost_per_conversion":"4.33","purchase_roas":"5.20"},
+      {"date_start":"2026-03-18","date_stop":"2026-03-18","spend":"201.30","impressions":"67100","clicks":"1342","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"53680","frequency":"1.25","conversions":"48","cost_per_conversion":"4.19","purchase_roas":"5.40"},
+      {"date_start":"2026-03-19","date_stop":"2026-03-19","spend":"187.60","impressions":"62500","clicks":"1125","ctr":"1.80","cpm":"3.00","cpc":"0.17","reach":"50000","frequency":"1.25","conversions":"40","cost_per_conversion":"4.69","purchase_roas":"4.80"},
+      {"date_start":"2026-03-20","date_stop":"2026-03-20","spend":"210.00","impressions":"70000","clicks":"1400","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"56000","frequency":"1.25","conversions":"52","cost_per_conversion":"4.04","purchase_roas":"5.60"},
+      {"date_start":"2026-03-21","date_stop":"2026-03-21","spend":"225.40","impressions":"75100","clicks":"1502","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"60080","frequency":"1.25","conversions":"58","cost_per_conversion":"3.89","purchase_roas":"5.80"},
+      {"date_start":"2026-03-22","date_stop":"2026-03-22","spend":"218.70","impressions":"72900","clicks":"1458","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"58320","frequency":"1.25","conversions":"55","cost_per_conversion":"3.98","purchase_roas":"5.60"},
+      {"date_start":"2026-03-23","date_stop":"2026-03-23","spend":"198.50","impressions":"66200","clicks":"1324","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"52960","frequency":"1.25","conversions":"46","cost_per_conversion":"4.31","purchase_roas":"5.10"},
+      {"date_start":"2026-03-24","date_stop":"2026-03-24","spend":"232.00","impressions":"77300","clicks":"1546","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"61840","frequency":"1.25","conversions":"60","cost_per_conversion":"3.87","purchase_roas":"6.00"},
+      {"date_start":"2026-03-25","date_stop":"2026-03-25","spend":"245.80","impressions":"81900","clicks":"1638","ctr":"2.00","cpm":"3.00","cpc":"0.15","reach":"65520","frequency":"1.25","conversions":"65","cost_per_conversion":"3.78","purchase_roas":"6.00"}
+    ],
+    "platform_breakdown": [
+      {"publisher_platform":"facebook","spend":"2800.00","impressions":"850000","clicks":"17000","ctr":"2.00","cpm":"3.29","cpc":"0.16"},
+      {"publisher_platform":"instagram","spend":"1750.00","impressions":"620000","clicks":"10850","ctr":"1.75","cpm":"2.82","cpc":"0.16"}
+    ],
+    "placement_breakdown": [
+      {"publisher_platform":"facebook","platform_position":"feed","spend":"1960.00","impressions":"595000","clicks":"12500","ctr":"2.10","cpm":"3.29","cpc":"0.16"},
+      {"publisher_platform":"facebook","platform_position":"right_hand_column","spend":"420.00","impressions":"127500","clicks":"2040","ctr":"1.60","cpm":"3.29","cpc":"0.21"},
+      {"publisher_platform":"facebook","platform_position":"video_feeds","spend":"420.00","impressions":"127500","clicks":"2460","ctr":"1.93","cpm":"3.29","cpc":"0.17"},
+      {"publisher_platform":"instagram","platform_position":"stream","spend":"875.00","impressions":"310000","clicks":"5890","ctr":"1.90","cpm":"2.82","cpc":"0.15"},
+      {"publisher_platform":"instagram","platform_position":"story","spend":"525.00","impressions":"186000","clicks":"2976","ctr":"1.60","cpm":"2.82","cpc":"0.18"},
+      {"publisher_platform":"instagram","platform_position":"explore","spend":"350.00","impressions":"124000","clicks":"1984","ctr":"1.60","cpm":"2.82","cpc":"0.18"}
+    ]
+  },
+  {
+    "campaign_id": "camp_2002",
+    "campaign_name": "US - Lead Gen Webinar",
+    "daily": [
+      {"date_start":"2026-03-10","date_stop":"2026-03-10","spend":"75.00","impressions":"15000","clicks":"300","ctr":"2.00","cpm":"5.00","cpc":"0.25","reach":"12000","frequency":"1.25","conversions":"8","cost_per_conversion":"9.38","purchase_roas":"0.00"},
+      {"date_start":"2026-03-11","date_stop":"2026-03-11","spend":"82.40","impressions":"16500","clicks":"330","ctr":"2.00","cpm":"5.00","cpc":"0.25","reach":"13200","frequency":"1.25","conversions":"10","cost_per_conversion":"8.24","purchase_roas":"0.00"},
+      {"date_start":"2026-03-12","date_stop":"2026-03-12","spend":"91.20","impressions":"18200","clicks":"364","ctr":"2.00","cpm":"5.01","cpc":"0.25","reach":"14560","frequency":"1.25","conversions":"12","cost_per_conversion":"7.60","purchase_roas":"0.00"},
+      {"date_start":"2026-03-13","date_stop":"2026-03-13","spend":"68.50","impressions":"13700","clicks":"247","ctr":"1.80","cpm":"5.00","cpc":"0.28","reach":"10960","frequency":"1.25","conversions":"7","cost_per_conversion":"9.79","purchase_roas":"0.00"},
+      {"date_start":"2026-03-14","date_stop":"2026-03-14","spend":"79.30","impressions":"15900","clicks":"318","ctr":"2.00","cpm":"4.99","cpc":"0.25","reach":"12720","frequency":"1.25","conversions":"9","cost_per_conversion":"8.81","purchase_roas":"0.00"},
+      {"date_start":"2026-03-15","date_stop":"2026-03-15","spend":"95.00","impressions":"19000","clicks":"380","ctr":"2.00","cpm":"5.00","cpc":"0.25","reach":"15200","frequency":"1.25","conversions":"14","cost_per_conversion":"6.79","purchase_roas":"0.00"},
+      {"date_start":"2026-03-16","date_stop":"2026-03-16","spend":"88.70","impressions":"17700","clicks":"354","ctr":"2.00","cpm":"5.01","cpc":"0.25","reach":"14160","frequency":"1.25","conversions":"11","cost_per_conversion":"8.06","purchase_roas":"0.00"},
+      {"date_start":"2026-03-17","date_stop":"2026-03-17","spend":"100.50","impressions":"20100","clicks":"402","ctr":"2.00","cpm":"5.00","cpc":"0.25","reach":"16080","frequency":"1.25","conversions":"15","cost_per_conversion":"6.70","purchase_roas":"0.00"},
+      {"date_start":"2026-03-18","date_stop":"2026-03-18","spend":"97.30","impressions":"19500","clicks":"390","ctr":"2.00","cpm":"4.99","cpc":"0.25","reach":"15600","frequency":"1.25","conversions":"13","cost_per_conversion":"7.48","purchase_roas":"0.00"},
+      {"date_start":"2026-03-19","date_stop":"2026-03-19","spend":"85.60","impressions":"17100","clicks":"308","ctr":"1.80","cpm":"5.01","cpc":"0.28","reach":"13680","frequency":"1.25","conversions":"9","cost_per_conversion":"9.51","purchase_roas":"0.00"},
+      {"date_start":"2026-03-20","date_stop":"2026-03-20","spend":"104.20","impressions":"20800","clicks":"416","ctr":"2.00","cpm":"5.01","cpc":"0.25","reach":"16640","frequency":"1.25","conversions":"16","cost_per_conversion":"6.51","purchase_roas":"0.00"},
+      {"date_start":"2026-03-21","date_stop":"2026-03-21","spend":"112.50","impressions":"22500","clicks":"450","ctr":"2.00","cpm":"5.00","cpc":"0.25","reach":"18000","frequency":"1.25","conversions":"19","cost_per_conversion":"5.92","purchase_roas":"0.00"},
+      {"date_start":"2026-03-22","date_stop":"2026-03-22","spend":"108.80","impressions":"21800","clicks":"436","ctr":"2.00","cpm":"4.99","cpc":"0.25","reach":"17440","frequency":"1.25","conversions":"17","cost_per_conversion":"6.40","purchase_roas":"0.00"},
+      {"date_start":"2026-03-23","date_stop":"2026-03-23","spend":"93.10","impressions":"18600","clicks":"372","ctr":"2.00","cpm":"5.01","cpc":"0.25","reach":"14880","frequency":"1.25","conversions":"12","cost_per_conversion":"7.76","purchase_roas":"0.00"},
+      {"date_start":"2026-03-24","date_stop":"2026-03-24","spend":"118.00","impressions":"23600","clicks":"472","ctr":"2.00","cpm":"5.00","cpc":"0.25","reach":"18880","frequency":"1.25","conversions":"21","cost_per_conversion":"5.62","purchase_roas":"0.00"},
+      {"date_start":"2026-03-25","date_stop":"2026-03-25","spend":"125.40","impressions":"25100","clicks":"502","ctr":"2.00","cpm":"5.00","cpc":"0.25","reach":"20080","frequency":"1.25","conversions":"24","cost_per_conversion":"5.23","purchase_roas":"0.00"}
+    ],
+    "platform_breakdown": [
+      {"publisher_platform":"facebook","spend":"1050.00","impressions":"210000","clicks":"4200","ctr":"2.00","cpm":"5.00","cpc":"0.25"},
+      {"publisher_platform":"instagram","spend":"575.50","impressions":"115100","clicks":"2041","ctr":"1.77","cpm":"5.00","cpc":"0.28"}
+    ],
+    "placement_breakdown": [
+      {"publisher_platform":"facebook","platform_position":"feed","spend":"735.00","impressions":"147000","clicks":"3087","ctr":"2.10","cpm":"5.00","cpc":"0.24"},
+      {"publisher_platform":"facebook","platform_position":"video_feeds","spend":"315.00","impressions":"63000","clicks":"1113","ctr":"1.77","cpm":"5.00","cpc":"0.28"},
+      {"publisher_platform":"instagram","platform_position":"stream","spend":"345.30","impressions":"69060","clicks":"1312","ctr":"1.90","cpm":"5.00","cpc":"0.26"},
+      {"publisher_platform":"instagram","platform_position":"story","spend":"230.20","impressions":"46040","clicks":"729","ctr":"1.58","cpm":"5.00","cpc":"0.32"}
+    ]
+  },
+  {
+    "campaign_id": "camp_2003",
+    "campaign_name": "US - Retargeting Conversions",
+    "daily": [
+      {"date_start":"2026-03-05","date_stop":"2026-03-05","spend":"185.00","impressions":"18500","clicks":"555","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"14800","frequency":"1.25","conversions":"45","cost_per_conversion":"4.11","purchase_roas":"5.50"},
+      {"date_start":"2026-03-06","date_stop":"2026-03-06","spend":"198.40","impressions":"19840","clicks":"595","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"15872","frequency":"1.25","conversions":"50","cost_per_conversion":"3.97","purchase_roas":"5.80"},
+      {"date_start":"2026-03-07","date_stop":"2026-03-07","spend":"192.10","impressions":"19210","clicks":"576","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"15368","frequency":"1.25","conversions":"47","cost_per_conversion":"4.09","purchase_roas":"5.60"},
+      {"date_start":"2026-03-08","date_stop":"2026-03-08","spend":"175.30","impressions":"17530","clicks":"526","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"14024","frequency":"1.25","conversions":"40","cost_per_conversion":"4.38","purchase_roas":"5.20"},
+      {"date_start":"2026-03-09","date_stop":"2026-03-09","spend":"168.50","impressions":"16850","clicks":"505","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"13480","frequency":"1.25","conversions":"38","cost_per_conversion":"4.43","purchase_roas":"5.10"},
+      {"date_start":"2026-03-10","date_stop":"2026-03-10","spend":"210.00","impressions":"21000","clicks":"630","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"16800","frequency":"1.25","conversions":"55","cost_per_conversion":"3.82","purchase_roas":"6.00"},
+      {"date_start":"2026-03-11","date_stop":"2026-03-11","spend":"225.50","impressions":"22550","clicks":"677","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"18040","frequency":"1.25","conversions":"60","cost_per_conversion":"3.76","purchase_roas":"6.00"},
+      {"date_start":"2026-03-12","date_stop":"2026-03-12","spend":"218.30","impressions":"21830","clicks":"655","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"17464","frequency":"1.25","conversions":"57","cost_per_conversion":"3.83","purchase_roas":"5.90"},
+      {"date_start":"2026-03-13","date_stop":"2026-03-13","spend":"195.80","impressions":"19580","clicks":"587","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"15664","frequency":"1.25","conversions":"48","cost_per_conversion":"4.08","purchase_roas":"5.50"},
+      {"date_start":"2026-03-14","date_stop":"2026-03-14","spend":"182.60","impressions":"18260","clicks":"548","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"14608","frequency":"1.25","conversions":"42","cost_per_conversion":"4.35","purchase_roas":"5.30"},
+      {"date_start":"2026-03-15","date_stop":"2026-03-15","spend":"240.00","impressions":"24000","clicks":"720","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"19200","frequency":"1.25","conversions":"65","cost_per_conversion":"3.69","purchase_roas":"6.00"},
+      {"date_start":"2026-03-16","date_stop":"2026-03-16","spend":"252.30","impressions":"25230","clicks":"757","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"20184","frequency":"1.25","conversions":"70","cost_per_conversion":"3.60","purchase_roas":"6.00"},
+      {"date_start":"2026-03-17","date_stop":"2026-03-17","spend":"261.00","impressions":"26100","clicks":"783","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"20880","frequency":"1.25","conversions":"75","cost_per_conversion":"3.48","purchase_roas":"6.00"},
+      {"date_start":"2026-03-18","date_stop":"2026-03-18","spend":"270.50","impressions":"27050","clicks":"811","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"21640","frequency":"1.25","conversions":"80","cost_per_conversion":"3.38","purchase_roas":"6.00"},
+      {"date_start":"2026-03-19","date_stop":"2026-03-19","spend":"248.70","impressions":"24870","clicks":"746","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"19896","frequency":"1.25","conversions":"68","cost_per_conversion":"3.66","purchase_roas":"5.80"},
+      {"date_start":"2026-03-20","date_stop":"2026-03-20","spend":"285.00","impressions":"28500","clicks":"855","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"22800","frequency":"1.25","conversions":"85","cost_per_conversion":"3.35","purchase_roas":"6.00"},
+      {"date_start":"2026-03-21","date_stop":"2026-03-21","spend":"298.20","impressions":"29820","clicks":"895","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"23856","frequency":"1.25","conversions":"90","cost_per_conversion":"3.31","purchase_roas":"6.00"},
+      {"date_start":"2026-03-22","date_stop":"2026-03-22","spend":"290.50","impressions":"29050","clicks":"872","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"23240","frequency":"1.25","conversions":"87","cost_per_conversion":"3.34","purchase_roas":"6.00"},
+      {"date_start":"2026-03-23","date_stop":"2026-03-23","spend":"265.40","impressions":"26540","clicks":"796","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"21232","frequency":"1.25","conversions":"72","cost_per_conversion":"3.69","purchase_roas":"5.80"},
+      {"date_start":"2026-03-24","date_stop":"2026-03-24","spend":"310.00","impressions":"31000","clicks":"930","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"24800","frequency":"1.25","conversions":"95","cost_per_conversion":"3.26","purchase_roas":"6.00"},
+      {"date_start":"2026-03-25","date_stop":"2026-03-25","spend":"325.60","impressions":"32560","clicks":"977","ctr":"3.00","cpm":"10.00","cpc":"0.33","reach":"26048","frequency":"1.25","conversions":"100","cost_per_conversion":"3.26","purchase_roas":"6.00"}
+    ],
+    "platform_breakdown": [
+      {"publisher_platform":"facebook","spend":"3200.00","impressions":"320000","clicks":"9600","ctr":"3.00","cpm":"10.00","cpc":"0.33"},
+      {"publisher_platform":"instagram","spend":"1718.70","impressions":"171870","clicks":"4816","ctr":"2.80","cpm":"10.00","cpc":"0.36"}
+    ],
+    "placement_breakdown": [
+      {"publisher_platform":"facebook","platform_position":"feed","spend":"2240.00","impressions":"224000","clicks":"7168","ctr":"3.20","cpm":"10.00","cpc":"0.31"},
+      {"publisher_platform":"facebook","platform_position":"right_hand_column","spend":"480.00","impressions":"48000","clicks":"960","ctr":"2.00","cpm":"10.00","cpc":"0.50"},
+      {"publisher_platform":"facebook","platform_position":"video_feeds","spend":"480.00","impressions":"48000","clicks":"1472","ctr":"3.07","cpm":"10.00","cpc":"0.33"},
+      {"publisher_platform":"instagram","platform_position":"stream","spend":"1031.22","impressions":"103122","clicks":"3196","ctr":"3.10","cpm":"10.00","cpc":"0.32"},
+      {"publisher_platform":"instagram","platform_position":"story","spend":"515.61","impressions":"51561","clicks":"1133","ctr":"2.20","cpm":"10.00","cpc":"0.46"},
+      {"publisher_platform":"instagram","platform_position":"explore","spend":"171.87","impressions":"17187","clicks":"487","ctr":"2.83","cpm":"10.00","cpc":"0.35"}
+    ]
+  }
+]

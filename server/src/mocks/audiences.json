@@ -1,0 +1,110 @@
+[
+  {
+    "id": "aud_7001",
+    "account_id": "act_1001",
+    "name": "Website Visitors 7d",
+    "type": "CUSTOM",
+    "subtype": "WEBSITE",
+    "approximate_count": 185000,
+    "delivery_status": { "status": "ready" },
+    "operation_status": { "status": 200, "description": "Normal" },
+    "time_created": "2026-01-15T10:00:00-0500",
+    "time_updated": "2026-03-25T06:00:00-0500"
+  },
+  {
+    "id": "aud_7002",
+    "account_id": "act_1001",
+    "name": "Cart Abandoners 14d",
+    "type": "CUSTOM",
+    "subtype": "WEBSITE",
+    "approximate_count": 42000,
+    "delivery_status": { "status": "ready" },
+    "operation_status": { "status": 200, "description": "Normal" },
+    "time_created": "2026-01-15T10:30:00-0500",
+    "time_updated": "2026-03-25T06:00:00-0500"
+  },
+  {
+    "id": "aud_7003",
+    "account_id": "act_1003",
+    "name": "Add to Cart 7d",
+    "type": "CUSTOM",
+    "subtype": "WEBSITE",
+    "approximate_count": 28500,
+    "delivery_status": { "status": "ready" },
+    "operation_status": { "status": 200, "description": "Normal" },
+    "time_created": "2026-02-01T08:00:00-0800",
+    "time_updated": "2026-03-25T04:00:00-0800"
+  },
+  {
+    "id": "aud_7004",
+    "account_id": "act_1003",
+    "name": "Purchasers 30d",
+    "type": "CUSTOM",
+    "subtype": "WEBSITE",
+    "approximate_count": 12300,
+    "delivery_status": { "status": "ready" },
+    "operation_status": { "status": 200, "description": "Normal" },
+    "time_created": "2026-02-01T08:30:00-0800",
+    "time_updated": "2026-03-25T04:00:00-0800"
+  },
+  {
+    "id": "aud_7010",
+    "account_id": "act_1001",
+    "name": "Email Subscribers - Active",
+    "type": "CUSTOM",
+    "subtype": "CUSTOM",
+    "approximate_count": 310000,
+    "delivery_status": { "status": "ready" },
+    "operation_status": { "status": 200, "description": "Normal" },
+    "time_created": "2025-11-10T09:00:00-0500",
+    "time_updated": "2026-03-20T12:00:00-0500"
+  },
+  {
+    "id": "aud_7011",
+    "account_id": "act_1001",
+    "name": "High-Value Buyers CRM",
+    "type": "CUSTOM",
+    "subtype": "CUSTOM",
+    "approximate_count": 45000,
+    "delivery_status": { "status": "ready" },
+    "operation_status": { "status": 200, "description": "Normal" },
+    "time_created": "2025-12-05T14:00:00-0500",
+    "time_updated": "2026-03-18T09:30:00-0500"
+  },
+  {
+    "id": "aud_7012",
+    "account_id": "act_1001",
+    "name": "IG Engagers 90d",
+    "type": "CUSTOM",
+    "subtype": "ENGAGEMENT",
+    "approximate_count": 520000,
+    "delivery_status": { "status": "ready" },
+    "operation_status": { "status": 200, "description": "Normal" },
+    "time_created": "2026-01-20T11:00:00-0500",
+    "time_updated": "2026-03-25T06:00:00-0500"
+  },
+  {
+    "id": "aud_7005",
+    "account_id": "act_1002",
+    "name": "LAL - EU Purchasers 1%",
+    "type": "CUSTOM",
+    "subtype": "LOOKALIKE",
+    "approximate_count": 2100000,
+    "delivery_status": { "status": "ready" },
+    "operation_status": { "status": 200, "description": "Normal" },
+    "time_created": "2026-02-15T10:00:00+0100",
+    "time_updated": "2026-03-15T06:00:00+0100"
+  },
+  {
+    "id": "aud_7006",
+    "account_id": "act_1003",
+    "name": "LAL - Purchasers 1%",
+    "type": "CUSTOM",
+    "subtype": "LOOKALIKE",
+    "approximate_count": 2500000,
+    "delivery_status": { "status": "ready" },
+    "operation_status": { "status": 200, "description": "Normal" },
+    "time_created": "2026-02-20T08:00:00-0800",
+    "time_updated": "2026-03-20T04:00:00-0800"
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "act_1001",
+    "account_id": "act_1001",
+    "name": "Acme Corp - US",
+    "currency": "USD",
+    "timezone_name": "America/New_York",
+    "spend_cap": 50000,
+    "account_status": 1,
+    "business": { "id": "biz_500", "name": "Acme Corp" }
+  },
+  {
+    "id": "act_1002",
+    "account_id": "act_1002",
+    "name": "Acme Corp - EU",
+    "currency": "EUR",
+    "timezone_name": "Europe/Berlin",
+    "spend_cap": 40000,
+    "account_status": 1,
+    "business": { "id": "biz_500", "name": "Acme Corp" }
+  },
+  {
+    "id": "act_1003",
+    "account_id": "act_1003",
+    "name": "Brand X DTC",
+    "currency": "USD",
+    "timezone_name": "America/Los_Angeles",
+    "spend_cap": 25000,
+    "account_status": 1,
+    "business": { "id": "biz_501", "name": "Brand X Inc" }
+  },
+  {
+    "id": "act_1004",
+    "account_id": "act_1004",
+    "name": "Agency Client A",
+    "currency": "GBP",
+    "timezone_name": "Europe/London",
+    "spend_cap": 15000,
+    "account_status": 1,
+    "business": { "id": "biz_502", "name": "Sterling Agency" }
+  },
+  {
+    "id": "act_1005",
+    "account_id": "act_1005",
+    "name": "Agency Client B",
+    "currency": "USD",
+    "timezone_name": "America/Chicago",
+    "spend_cap": 30000,
+    "account_status": 2,
+    "business": { "id": "biz_502", "name": "Sterling Agency" }
+  }
+]
