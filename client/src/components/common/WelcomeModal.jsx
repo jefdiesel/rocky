@@ -110,7 +110,7 @@ export default function WelcomeModal() {
                 </button>
                 <button
                   onClick={handleConnect}
-                  className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+                  className="flex items-center gap-2 rounded-xl bg-blue-500 px-8 py-4 text-base font-bold text-white hover:bg-blue-400 transition-colors shadow-lg shadow-blue-500/25"
                 >
                   Connect Meta Account <ArrowRight size={15} />
                 </button>
@@ -149,7 +149,7 @@ export default function WelcomeModal() {
                 </button>
                 <button
                   onClick={handleConnect}
-                  className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+                  className="flex items-center gap-2 rounded-xl bg-blue-500 px-8 py-4 text-base font-bold text-white hover:bg-blue-400 transition-colors shadow-lg shadow-blue-500/25"
                 >
                   Connect Meta Account <ArrowRight size={15} />
                 </button>
