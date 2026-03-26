@@ -1,7 +1,8 @@
 {
   "version": 2,
-  "installCommand": "cd server && npm install && cd ../client && npm install",
-  "buildCommand": "cd client && npm run build",
+  "framework": null,
+  "installCommand": "echo 'skip'",
+  "buildCommand": "ls -la && npm install --prefix ./server && npm install --prefix ./client && cd client && npm run build",
   "outputDirectory": "client/dist",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" },
