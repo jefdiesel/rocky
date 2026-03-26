@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar.jsx';
 import TopBar from './TopBar.jsx';
+import WelcomeModal from '../common/WelcomeModal.jsx';
 import useAccounts from '../../hooks/useAccounts.js';
 import useDateRange from '../../hooks/useDateRange.js';
 
@@ -10,6 +11,7 @@ export default function Layout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-zinc-950 text-zinc-100">
+      <WelcomeModal />
       <Sidebar selectedAccount={selectedAccount} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <TopBar

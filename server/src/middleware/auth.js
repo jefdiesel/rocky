@@ -1,4 +1,5 @@
 const supabase = require('../services/supabase');
+const { decrypt } = require('../services/crypto');
 
 /**
  * Verifies the Bearer token from the Authorization header.
@@ -20,7 +21,7 @@ async function verifyToken(req, res, next) {
   try {
     const { data: user, error } = await supabase
       .from('users')
-      .select('*')
+      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at')
       .eq('session_token', token)
       .single();
 
@@ -37,6 +38,10 @@ async function verifyToken(req, res, next) {
     if (user.token_expiry && new Date(user.token_expiry) < new Date()) {
       req.metaTokenExpired = true;
     }
+
+    // Decrypt Meta access token for API use
+    user.access_token = decrypt(user.access_token);
+    if (user.system_token) user.system_token = decrypt(user.system_token);
 
     req.user = user;
     next();
@@ -63,7 +68,7 @@ async function optionalAuth(req, res, next) {
   try {
     const { data: user } = await supabase
       .from('users')
-      .select('*')
+      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at')
       .eq('session_token', token)
       .single();
 

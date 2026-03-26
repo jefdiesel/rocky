@@ -2,6 +2,7 @@ const { Router } = require('express');
 const crypto = require('crypto');
 const fetch = require('node-fetch');
 const supabase = require('../services/supabase');
+const { encrypt } = require('../services/crypto');
 const { verifyToken } = require('../middleware/auth');
 
 const router = Router();
@@ -119,7 +120,7 @@ router.get('/meta/callback', async (req, res) => {
           meta_user_id: meData.id,
           name: meData.name || null,
           email: meData.email || null,
-          access_token: accessToken,
+          access_token: encrypt(accessToken),
           token_expiry: tokenExpiry.toISOString(),
           session_token: sessionToken,
           session_expiry: sessionExpiry.toISOString(),
@@ -174,8 +175,8 @@ router.post('/system-token', async (req, res) => {
         {
           meta_user_id: meData.id,
           name: meData.name || 'System User',
-          system_token: token,
-          access_token: token,
+          system_token: encrypt(token),
+          access_token: encrypt(token),
           session_token: sessionToken,
           session_expiry: sessionExpiry.toISOString(),
           updated_at: new Date().toISOString(),
