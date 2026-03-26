@@ -91,28 +91,29 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-// ── Start ────────────────────────────────────────────────────────────────────
-const PORT = parseInt(process.env.PORT, 10) || 3001;
-app.listen(PORT, async () => {
-  console.log(`[rocky] Server listening on port ${PORT}`);
-  if (!process.env.META_APP_ID) {
-    console.log('[rocky] META_APP_ID not set — running in mock mode');
-  }
-
-  // Verify Supabase connection
-  const supabase = require('./services/supabase');
-  if (supabase) {
-    try {
-      const { data, error } = await supabase.from('users').select('id').limit(1);
-      if (error) {
-        console.error('[supabase] Connection test failed:', error.message);
-      } else {
-        console.log('[supabase] Connected successfully');
-      }
-    } catch (err) {
-      console.error('[supabase] Connection test error:', err.message);
+// ── Start (only when run directly, not when imported by Vercel) ──────────────
+if (require.main === module) {
+  const PORT = parseInt(process.env.PORT, 10) || 3001;
+  app.listen(PORT, async () => {
+    console.log(`[rocky] Server listening on port ${PORT}`);
+    if (!process.env.META_APP_ID) {
+      console.log('[rocky] META_APP_ID not set — running in mock mode');
     }
-  }
-});
+
+    const supabase = require('./services/supabase');
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.from('users').select('id').limit(1);
+        if (error) {
+          console.error('[supabase] Connection test failed:', error.message);
+        } else {
+          console.log('[supabase] Connected successfully');
+        }
+      } catch (err) {
+        console.error('[supabase] Connection test error:', err.message);
+      }
+    }
+  });
+}
 
 module.exports = app;
