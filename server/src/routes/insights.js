@@ -18,10 +18,24 @@ router.get('/:accountId', verifyToken, async (req, res) => {
       date_preset,
       time_range,
       time_increment,
+      since,
+      until,
     } = req.query;
 
+    // Build time_range from since/until if provided directly
+    let resolvedTimeRange = null;
+    if (time_range) {
+      try {
+        resolvedTimeRange = typeof time_range === 'string' ? JSON.parse(time_range) : time_range;
+      } catch {
+        return res.status(400).json({ error: 'Invalid time_range format.' });
+      }
+    } else if (since && until) {
+      resolvedTimeRange = { since, until };
+    }
+
     // Build a cache key from the query params
-    const cacheKey = JSON.stringify({ accountId, level, fields, breakdowns, date_preset, time_range });
+    const cacheKey = JSON.stringify({ accountId, level, fields, breakdowns, date_preset, time_range: resolvedTimeRange });
 
     // Check Supabase cache
     if (supabase) {
@@ -46,13 +60,8 @@ router.get('/:accountId', verifyToken, async (req, res) => {
     const params = { fields, level };
     if (breakdowns) params.breakdowns = breakdowns;
     if (date_preset) params.date_preset = date_preset;
-    if (time_range) {
-      try {
-        params.time_range = typeof time_range === 'string' ? JSON.parse(time_range) : time_range;
-      } catch {
-        return res.status(400).json({ error: 'Invalid time_range format. Expected JSON object with since and until.' });
-      }
-    }
+    if (resolvedTimeRange) params.time_range = resolvedTimeRange;
+    if (!date_preset && !resolvedTimeRange) params.date_preset = 'last_7d';
     if (time_increment) params.time_increment = time_increment;
 
     const result = await meta.getInsights(accountId, params);
