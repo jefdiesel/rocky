@@ -19,10 +19,12 @@ export default function Campaigns() {
     queryFn: async () => {
       try {
         const res = await api.getCampaigns();
-        return res.data || res;
+        return res.data || [];
       } catch (err) {
-        if (localStorage.getItem('auth_token')) throw err;
-        return getMockCampaigns().data;
+        if (!localStorage.getItem('auth_token')) return getMockCampaigns().data;
+        if (err.status === 401) throw err;
+        console.warn('[campaigns]', err.message);
+        return [];
       }
     },
   });

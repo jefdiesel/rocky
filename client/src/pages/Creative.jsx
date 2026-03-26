@@ -43,8 +43,10 @@ export default function Creative() {
         const res = await api.getCreatives();
         return res.data || res;
       } catch (err) {
-        if (localStorage.getItem('auth_token')) throw err;
-        return getMockCreatives().data;
+        if (!localStorage.getItem('auth_token')) return getMockCreatives().data;
+        if (err.status === 401) throw err;
+        console.warn('[creatives]', err.message);
+        return [];
       }
     },
   });

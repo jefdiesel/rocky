@@ -35,10 +35,12 @@ export default function Audiences() {
     queryFn: async () => {
       try {
         const res = await api.getAudiences();
-        return res.data || res;
+        return res.data || [];
       } catch (err) {
-        if (localStorage.getItem('auth_token')) throw err;
-        return getMockAudiences().data;
+        if (!localStorage.getItem('auth_token')) return getMockAudiences().data;
+        if (err.status === 401) throw err;
+        console.warn('[audiences]', err.message);
+        return [];
       }
     },
   });

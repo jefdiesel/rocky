@@ -47,8 +47,10 @@ export default function Pixels() {
         const res = await api.getPixels();
         return res.data || res;
       } catch (err) {
-        if (localStorage.getItem('auth_token')) throw err;
-        return getMockPixels().data;
+        if (!localStorage.getItem('auth_token')) return getMockPixels().data;
+        if (err.status === 401) throw err;
+        console.warn('[pixels]', err.message);
+        return [];
       }
     },
   });
