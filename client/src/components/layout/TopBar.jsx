@@ -36,11 +36,11 @@ export default function TopBar({ accounts, selectedAccount, onSelectAccount, dat
           <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-lg border border-zinc-700 bg-zinc-800 py-1 shadow-xl">
             {accounts.map((acc) => (
               <button
-                key={acc.id}
-                onClick={() => { onSelectAccount(acc.id); setAccountOpen(false); }}
+                key={acc.account_id || acc.id}
+                onClick={() => { onSelectAccount(acc.account_id || acc.id); setAccountOpen(false); }}
                 className={clsx(
                   'flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors',
-                  acc.id === selectedAccount?.id ? 'bg-primary-600/15 text-primary-400' : 'text-zinc-300 hover:bg-zinc-700'
+                  acc.account_id || acc.id === selectedAccount?.id ? 'bg-primary-600/15 text-primary-400' : 'text-zinc-300 hover:bg-zinc-700'
                 )}
               >
                 <div className="flex h-5 w-5 items-center justify-center rounded bg-zinc-700 text-2xs font-bold text-zinc-300">
@@ -48,7 +48,7 @@ export default function TopBar({ accounts, selectedAccount, onSelectAccount, dat
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{acc.name}</p>
-                  <p className="text-2xs text-zinc-500">{acc.id} &middot; {acc.currency}</p>
+                  <p className="text-2xs text-zinc-500">{acc.account_id || acc.id} &middot; {acc.currency}</p>
                 </div>
               </button>
             ))}
