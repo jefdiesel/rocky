@@ -19,6 +19,7 @@ const audienceRoutes = require('./routes/audiences');
 const pixelRoutes = require('./routes/pixels');
 const creativeRoutes = require('./routes/creative');
 const utmRoutes = require('./routes/utm');
+const settingsRoutes = require('./routes/settings');
 
 const app = express();
 
@@ -60,6 +61,7 @@ app.use('/api/audiences', audienceRoutes);
 app.use('/api/pixels', pixelRoutes);
 app.use('/api/creative', creativeRoutes);
 app.use('/api/utm', utmRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // ── Health check ─────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => {

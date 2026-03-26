@@ -1,33 +1,76 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { RefreshCw, Save, Trash2, ExternalLink, Check, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 import api from '../services/api.js';
 
+const DEFAULT_UTM = {
+  source: 'facebook',
+  medium: 'paid_social',
+  campaign: '{campaign_name}',
+  content: '{ad_name}',
+};
+
+const DEFAULT_NOTIFICATIONS = {
+  budgetAlerts: true,
+  frequencyAlerts: true,
+  performanceDrops: true,
+  dailyDigest: false,
+  weeklyReport: true,
+};
+
+function loadPref(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export default function Settings() {
+  const queryClient = useQueryClient();
   const [token, setToken] = useState(() => localStorage.getItem('meta_token') || '');
   const [tokenSaved, setTokenSaved] = useState(false);
   const [clearingCache, setClearingCache] = useState(false);
   const [cacheCleared, setCacheCleared] = useState(false);
+  const [prefsSaved, setPrefsSaved] = useState(false);
 
-  // Default UTM settings
-  const [utmDefaults, setUtmDefaults] = useState({
-    source: 'facebook',
-    medium: 'paid_social',
-    campaign: '{campaign_name}',
-    content: '{ad_name}',
-  });
+  // Default UTM settings — load from localStorage
+  const [utmDefaults, setUtmDefaults] = useState(() => loadPref('rocky_utm_defaults', DEFAULT_UTM));
 
-  // Notification prefs
-  const [notifications, setNotifications] = useState({
-    budgetAlerts: true,
-    frequencyAlerts: true,
-    performanceDrops: true,
-    dailyDigest: false,
-    weeklyReport: true,
-  });
+  // Notification prefs — load from localStorage
+  const [notifications, setNotifications] = useState(() => loadPref('rocky_notifications', DEFAULT_NOTIFICATIONS));
+
+  // Load preferences from API on mount (overrides localStorage if server has data)
+  useEffect(() => {
+    if (!localStorage.getItem('auth_token')) return;
+    api.getMe().then((res) => {
+      const prefs = res.data?.preferences;
+      if (prefs) {
+        if (prefs.utm_defaults) {
+          setUtmDefaults(prefs.utm_defaults);
+          localStorage.setItem('rocky_utm_defaults', JSON.stringify(prefs.utm_defaults));
+        }
+        if (prefs.notifications) {
+          setNotifications(prefs.notifications);
+          localStorage.setItem('rocky_notifications', JSON.stringify(prefs.notifications));
+        }
+      }
+    }).catch(() => { /* API unavailable, use localStorage */ });
+  }, []);
+
+  // Persist UTM defaults on change
+  useEffect(() => {
+    localStorage.setItem('rocky_utm_defaults', JSON.stringify(utmDefaults));
+  }, [utmDefaults]);
+
+  // Persist notification prefs on change
+  useEffect(() => {
+    localStorage.setItem('rocky_notifications', JSON.stringify(notifications));
+  }, [notifications]);
 
   const { data: authStatus } = useQuery({
     queryKey: ['auth-status'],
@@ -57,9 +100,11 @@ export default function Settings() {
   const handleClearCache = async () => {
     setClearingCache(true);
     try {
-      await api.clearCache();
+      // Invalidate all react-query caches so next navigation refetches from API
+      await queryClient.invalidateQueries();
+      queryClient.clear();
     } catch {
-      // mock success
+      // ignore errors
     }
     setClearingCache(false);
     setCacheCleared(true);
@@ -231,6 +276,30 @@ export default function Settings() {
               </button>
             </div>
           ))}
+        </div>
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={async () => {
+              localStorage.setItem('rocky_notifications', JSON.stringify(notifications));
+              localStorage.setItem('rocky_utm_defaults', JSON.stringify(utmDefaults));
+              // Also persist to API if authenticated
+              if (localStorage.getItem('auth_token')) {
+                try {
+                  await api.savePreferences({ utm_defaults: utmDefaults, notifications });
+                } catch { /* API unavailable, localStorage is the fallback */ }
+              }
+              setPrefsSaved(true);
+              setTimeout(() => setPrefsSaved(false), 2000);
+            }}
+            className={clsx(
+              'flex items-center gap-1.5 rounded-md px-4 py-1.5 text-xs font-medium transition-colors',
+              prefsSaved
+                ? 'bg-emerald-600 text-white'
+                : 'bg-primary-600 text-white hover:bg-primary-700'
+            )}
+          >
+            {prefsSaved ? <><Check size={13} /> Saved</> : <><Save size={13} /> Save Preferences</>}
+          </button>
         </div>
       </div>
     </div>

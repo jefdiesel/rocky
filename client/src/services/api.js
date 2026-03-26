@@ -132,6 +132,10 @@ export const api = {
   getPixelStats: (pixelId) => request(`/pixels/${pixelId}/stats`),
   getPixelEvents: (pixelId) => request(`/pixels/${pixelId}/events`),
 
+  // Settings / Preferences
+  getPreferences: () => request('/settings'),
+  savePreferences: (data) => request('/settings', { method: 'PUT', body: JSON.stringify(data) }),
+
   // UTM
   getUtmTemplates: () => request('/utm/templates'),
   createUtmTemplate: (data) => request('/utm/templates', { method: 'POST', body: JSON.stringify(data) }),

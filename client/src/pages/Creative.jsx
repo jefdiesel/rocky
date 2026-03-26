@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Upload, Image, Video, X, Eye, Plus, Copy, Edit, ExternalLink } from 'lucide-react';
 import clsx from 'clsx';
@@ -18,15 +18,10 @@ const PREVIEW_MODES = [
   { value: 'fb_stories', label: 'FB Stories' },
 ];
 
-const MOCK_VARIANTS = [
+const DEFAULT_VARIANTS = [
   { id: 1, headline: 'Summer Sale - 50% Off', body: 'Shop now and save big on all items', cta: 'Shop Now', ctr: 2.45, cpa: 18.30 },
   { id: 2, headline: 'Limited Time Offer', body: 'Don\'t miss out on incredible deals', cta: 'Learn More', ctr: 1.89, cpa: 22.10 },
   { id: 3, headline: 'Free Shipping Today', body: 'Order today for free express delivery', cta: 'Shop Now', ctr: 3.12, cpa: 15.60 },
-];
-
-const MOCK_UTM_TEMPLATES = [
-  { id: 1, name: 'Default Campaign', source: 'facebook', medium: 'paid_social', campaign: '{campaign_name}', content: '{ad_name}' },
-  { id: 2, name: 'Retargeting', source: 'facebook', medium: 'retargeting', campaign: '{campaign_name}', content: '{ad_set_name}' },
 ];
 
 export default function Creative() {
@@ -35,6 +30,45 @@ export default function Creative() {
   const [viewMode, setViewMode] = useState('mobile');
   const [showPreview, setShowPreview] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [variants, setVariants] = useState(DEFAULT_VARIANTS);
+  const fileInputRef = useRef(null);
+
+  // Fetch UTM templates from API, fall back to defaults
+  const { data: utmTemplates } = useQuery({
+    queryKey: ['utm-templates'],
+    queryFn: async () => {
+      try {
+        const res = await api.getUtmTemplates();
+        const templates = res.data || res;
+        return templates.length > 0 ? templates : [];
+      } catch {
+        return [];
+      }
+    },
+  });
+
+  const utmTemplateList = utmTemplates && utmTemplates.length > 0 ? utmTemplates : [
+    { id: 1, name: 'Default Campaign', source: 'facebook', medium: 'paid_social', campaign: '{campaign_name}', content: '{ad_name}' },
+    { id: 2, name: 'Retargeting', source: 'facebook', medium: 'retargeting', campaign: '{campaign_name}', content: '{ad_set_name}' },
+  ];
+
+  const handleFileUpload = async (files) => {
+    setUploading(true);
+    try {
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const isVideo = file.type.startsWith('video/');
+        isVideo ? await api.uploadVideo(formData) : await api.uploadImage(formData);
+      }
+      refetch();
+    } catch (err) {
+      console.error('Upload failed:', err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['creatives'],
@@ -67,13 +101,30 @@ export default function Creative() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold text-zinc-100">Creative Studio</h1>
-        <button className="flex items-center gap-1.5 rounded-md bg-primary-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-700">
-          <Upload size={14} /> Upload Assets
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className="flex items-center gap-1.5 rounded-md bg-primary-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+        >
+          <Upload size={14} /> {uploading ? 'Uploading...' : 'Upload Assets'}
         </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*,video/*"
+          multiple
+          className="hidden"
+          onChange={(e) => { if (e.target.files.length) handleFileUpload(Array.from(e.target.files)); }}
+        />
       </div>
 
       {/* Upload Area */}
-      <div className="drop-zone flex flex-col items-center justify-center rounded-lg py-10">
+      <div
+        className="drop-zone flex flex-col items-center justify-center rounded-lg py-10 cursor-pointer"
+        onClick={() => fileInputRef.current?.click()}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => { e.preventDefault(); handleFileUpload(Array.from(e.dataTransfer.files)); }}
+      >
         <Upload size={28} className="mb-2 text-zinc-500" />
         <p className="text-xs text-zinc-400">Drag and drop images or videos here</p>
         <p className="text-2xs text-zinc-600">JPEG, PNG, MP4, MOV up to 4GB</p>
@@ -290,7 +341,7 @@ export default function Creative() {
               </tr>
             </thead>
             <tbody>
-              {MOCK_VARIANTS.map((v) => (
+              {variants.map((v) => (
                 <tr key={v.id} className="border-b border-zinc-700/30 hover:bg-zinc-800/50">
                   <td className="text-zinc-300">{v.headline}</td>
                   <td className="max-w-xs truncate text-zinc-400">{v.body}</td>
@@ -323,7 +374,7 @@ export default function Creative() {
           </button>
         </div>
         <div className="space-y-2">
-          {MOCK_UTM_TEMPLATES.map((tpl) => (
+          {utmTemplateList.map((tpl) => (
             <div key={tpl.id} className="flex items-center justify-between rounded border border-zinc-700/30 bg-zinc-900/50 px-3 py-2">
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-medium text-zinc-300">{tpl.name}</p>

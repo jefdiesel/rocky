@@ -16,14 +16,19 @@ const AUDIENCE_TABS = ['Customer List', 'Website', 'Engagement', 'App Activity']
 export default function Audiences() {
   const [createOpen, setCreateOpen] = useState(false);
   const [createTab, setCreateTab] = useState(0);
+  const [creating, setCreating] = useState(false);
   const [lookalikeOpen, setLookalikeOpen] = useState(false);
   const [lookalikeSource, setLookalikeSource] = useState('');
   const [lookalikeCountry, setLookalikeCountry] = useState('US');
   const [lookalikePercent, setLookalikePercent] = useState(1);
+  const [creatingLookalike, setCreatingLookalike] = useState(false);
   const [overlapA, setOverlapA] = useState('');
   const [overlapB, setOverlapB] = useState('');
   const [overlapResult, setOverlapResult] = useState(null);
   const [overlapLoading, setOverlapLoading] = useState(false);
+
+  // Create audience form fields
+  const [audienceName, setAudienceName] = useState('');
 
   // Website audience rule builder state
   const [pixelEvents, setPixelEvents] = useState([{ event: 'PageView', param: '', value: '' }]);
@@ -82,6 +87,46 @@ export default function Audiences() {
   const estimateLookalikeSize = () => {
     const base = 3200000;
     return Math.round(base * (lookalikePercent / 100) * (0.8 + Math.random() * 0.4));
+  };
+
+  const handleCreateAudience = async () => {
+    setCreating(true);
+    try {
+      const sourceType = AUDIENCE_TABS[createTab];
+      const payload = {
+        name: audienceName || `${sourceType} Audience`,
+        subtype: createTab === 0 ? 'CUSTOM' : createTab === 1 ? 'WEBSITE' : createTab === 2 ? 'ENGAGEMENT' : 'APP',
+        source_type: sourceType,
+      };
+      if (createTab === 1) {
+        payload.rule = { events: pixelEvents };
+      }
+      await api.createAudience(payload);
+      setCreateOpen(false);
+      setAudienceName('');
+      refetch();
+    } catch (err) {
+      alert('Failed to create audience: ' + (err.message || 'Unknown error'));
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleCreateLookalike = async () => {
+    if (!lookalikeSource) return;
+    setCreatingLookalike(true);
+    try {
+      await api.createLookalike({
+        source_audience_id: lookalikeSource,
+        country: lookalikeCountry,
+        percent: lookalikePercent,
+      });
+      refetch();
+    } catch (err) {
+      alert('Failed to create lookalike: ' + (err.message || 'Unknown error'));
+    } finally {
+      setCreatingLookalike(false);
+    }
   };
 
   if (error) {
@@ -165,10 +210,11 @@ export default function Audiences() {
                 <p className="text-lg font-bold text-zinc-100">{formatNumber(estimateLookalikeSize())}</p>
               </div>
               <button
-                disabled={!lookalikeSource}
+                onClick={handleCreateLookalike}
+                disabled={!lookalikeSource || creatingLookalike}
                 className="rounded-md bg-primary-600 px-4 py-2 text-xs font-medium text-white hover:bg-primary-700 disabled:opacity-50"
               >
-                Create Lookalike
+                {creatingLookalike ? 'Creating...' : 'Create Lookalike'}
               </button>
             </div>
           </div>
@@ -229,7 +275,13 @@ export default function Audiences() {
         footer={
           <>
             <button onClick={() => setCreateOpen(false)} className="rounded-md border border-zinc-700 px-4 py-1.5 text-xs text-zinc-400 hover:bg-zinc-700">Cancel</button>
-            <button className="rounded-md bg-primary-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-primary-700">Create</button>
+            <button
+              onClick={handleCreateAudience}
+              disabled={creating}
+              className="rounded-md bg-primary-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+            >
+              {creating ? 'Creating...' : 'Create'}
+            </button>
           </>
         }
       >

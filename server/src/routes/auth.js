@@ -209,7 +209,7 @@ router.post('/system-token', async (req, res) => {
 
 // ── GET /auth/me — Return current user info ──────────────────────────────────
 router.get('/me', verifyToken, (req, res) => {
-  const { id, name, email, meta_user_id, token_expiry, created_at } = req.user;
+  const { id, name, email, meta_user_id, token_expiry, created_at, preferences } = req.user;
   return res.json({
     data: {
       id,
@@ -219,6 +219,7 @@ router.get('/me', verifyToken, (req, res) => {
       token_expiry,
       meta_token_expired: !!req.metaTokenExpired,
       created_at,
+      preferences: preferences || null,
     },
   });
 });

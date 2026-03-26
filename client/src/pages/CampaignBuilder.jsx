@@ -1,4 +1,4 @@
-import { useReducer, useState, useCallback } from 'react';
+import { useReducer, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ChevronRight, ChevronLeft, Check, Plus, X, Upload, Image, GalleryHorizontal,
@@ -10,6 +10,7 @@ import {
   OPTIMIZATION_GOALS, ATTRIBUTION_WINDOWS, AD_FORMATS,
 } from '../utils/constants.js';
 import { buildUTMUrl } from '../utils/format.js';
+import api from '../services/api.js';
 
 // --- State management ---
 const initialState = {
@@ -122,14 +123,76 @@ export default function CampaignBuilder() {
     return true;
   };
 
+  const fileInputRef = useRef(null);
+
+  const handleFileUpload = async (files) => {
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const isVideo = file.type.startsWith('video/');
+        const result = isVideo
+          ? await api.uploadVideo(formData)
+          : await api.uploadImage(formData);
+        const asset = result.data || result;
+        dispatch({ type: 'SET_FIELD', field: 'assets', value: [...state.assets, asset] });
+      } catch (err) {
+        console.error('Upload failed:', err.message);
+      }
+    }
+  };
+
   const handleSubmit = async (draft = false) => {
     setSubmitting(true);
     try {
-      // In production this would call the API
-      await new Promise((r) => setTimeout(r, 1000));
+      const payload = {
+        name: state.name,
+        objective: state.objective,
+        buying_type: state.buyingType,
+        special_ad_categories: state.specialAdCategories,
+        budget_type: state.budgetType,
+        budget_amount: parseFloat(state.budgetAmount) || 0,
+        start_date: state.startDate,
+        end_date: state.endDate,
+        bid_strategy: state.bidStrategy,
+        bid_cap: state.bidCap ? parseFloat(state.bidCap) : undefined,
+        placement_mode: state.placementMode,
+        selected_placements: state.selectedPlacements,
+        optimization_goal: state.optimizationGoal,
+        attribution_click: state.attributionClick,
+        attribution_view: state.attributionView,
+        targeting: {
+          age_min: state.ageMin,
+          age_max: state.ageMax,
+          gender: state.gender,
+          locations: state.locations,
+          interests: state.interests,
+          saved_audience_id: state.savedAudienceId,
+          custom_audience_ids: state.customAudienceIds,
+          lookalike_audience_ids: state.lookalikeAudienceIds,
+        },
+        ad_format: state.adFormat,
+        primary_text: state.primaryText,
+        headline: state.headline,
+        description: state.description,
+        cta: state.cta,
+        destination_url: state.destinationUrl,
+        utm_source: state.utmSource,
+        utm_medium: state.utmMedium,
+        utm_campaign: state.utmCampaign,
+        utm_content: state.utmContent,
+        variants: state.variants,
+        assets: state.assets,
+      };
+
+      if (draft) {
+        await api.saveDraft(payload);
+      } else {
+        await api.createCampaign(payload);
+      }
       navigate('/campaigns');
-    } catch {
-      // error handling
+    } catch (err) {
+      alert('Failed to ' + (draft ? 'save draft' : 'submit campaign') + ': ' + (err.message || 'Unknown error'));
     } finally {
       setSubmitting(false);
     }
@@ -540,10 +603,26 @@ export default function CampaignBuilder() {
               {/* Left: Copy fields */}
               <div className="space-y-4">
                 {/* Upload */}
-                <div className="drop-zone flex flex-col items-center justify-center rounded-lg py-8">
+                <div
+                  className="drop-zone flex flex-col items-center justify-center rounded-lg py-8 cursor-pointer"
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => { e.preventDefault(); handleFileUpload(Array.from(e.dataTransfer.files)); }}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*,video/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => { if (e.target.files.length) handleFileUpload(Array.from(e.target.files)); }}
+                  />
                   <Upload size={24} className="mb-2 text-zinc-500" />
                   <p className="text-xs text-zinc-400">Drag and drop files here</p>
                   <p className="text-2xs text-zinc-600">or click to browse</p>
+                  {state.assets.length > 0 && (
+                    <p className="mt-2 text-2xs text-emerald-400">{state.assets.length} file(s) uploaded</p>
+                  )}
                 </div>
 
                 {/* Copy */}

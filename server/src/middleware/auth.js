@@ -21,7 +21,7 @@ async function verifyToken(req, res, next) {
   try {
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at')
+      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at, preferences')
       .eq('session_token', token)
       .single();
 
@@ -68,7 +68,7 @@ async function optionalAuth(req, res, next) {
   try {
     const { data: user } = await supabase
       .from('users')
-      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at')
+      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at, preferences')
       .eq('session_token', token)
       .single();
 

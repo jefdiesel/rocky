@@ -73,18 +73,45 @@ export default function Pixels() {
     }
   };
 
-  // Polling for test events
+  // Polling for test events — use real API when authenticated, mock otherwise
   useEffect(() => {
     const activePixels = Object.entries(testMode).filter(([, active]) => active).map(([id]) => id);
     if (activePixels.length === 0) return;
 
+    const isAuthenticated = !!localStorage.getItem('auth_token');
+
     const interval = setInterval(() => {
-      activePixels.forEach((pixelId) => {
-        const newEvent = generateMockTestEvent();
-        setTestEvents((prev) => ({
-          ...prev,
-          [pixelId]: [newEvent, ...(prev[pixelId] || [])].slice(0, 50),
-        }));
+      activePixels.forEach(async (pixelId) => {
+        if (isAuthenticated) {
+          try {
+            const res = await api.getPixelEvents(pixelId);
+            const events = res.data || res || [];
+            if (Array.isArray(events) && events.length > 0) {
+              setTestEvents((prev) => {
+                const existing = prev[pixelId] || [];
+                const existingIds = new Set(existing.map((e) => e.id));
+                const newEvents = events.filter((e) => !existingIds.has(e.id));
+                return {
+                  ...prev,
+                  [pixelId]: [...newEvents, ...existing].slice(0, 50),
+                };
+              });
+            }
+          } catch {
+            // Fall back to mock if API call fails
+            const newEvent = generateMockTestEvent();
+            setTestEvents((prev) => ({
+              ...prev,
+              [pixelId]: [newEvent, ...(prev[pixelId] || [])].slice(0, 50),
+            }));
+          }
+        } else {
+          const newEvent = generateMockTestEvent();
+          setTestEvents((prev) => ({
+            ...prev,
+            [pixelId]: [newEvent, ...(prev[pixelId] || [])].slice(0, 50),
+          }));
+        }
       });
     }, 5000);
 

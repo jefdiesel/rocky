@@ -1,13 +1,50 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bell, User, ChevronDown, LogOut, RefreshCw } from 'lucide-react';
 import clsx from 'clsx';
 import DateRangePicker from '../common/DateRangePicker.jsx';
+import api from '../../services/api.js';
 
 export default function TopBar({ accounts, selectedAccount, onSelectAccount, dateRange }) {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [accountOpen, setAccountOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const accountRef = useRef(null);
   const userRef = useRef(null);
+
+  // Fetch real user info
+  const { data: user } = useQuery({
+    queryKey: ['auth-me'],
+    queryFn: async () => {
+      try {
+        const res = await api.getMe();
+        return res.data || res;
+      } catch {
+        return null;
+      }
+    },
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const handleRefreshData = () => {
+    queryClient.invalidateQueries();
+    setUserOpen(false);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await api.logout();
+    } catch {
+      // server may be unavailable, proceed anyway
+    }
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('meta_token');
+    localStorage.removeItem('selected_account_id');
+    setUserOpen(false);
+    navigate('/settings');
+  };
 
   useEffect(() => {
     function handleClick(e) {
@@ -84,13 +121,19 @@ export default function TopBar({ accounts, selectedAccount, onSelectAccount, dat
           {userOpen && (
             <div className="absolute right-0 top-full z-50 mt-1 w-48 rounded-lg border border-zinc-700 bg-zinc-800 py-1 shadow-xl">
               <div className="border-b border-zinc-700 px-3 py-2">
-                <p className="text-xs font-medium text-zinc-200">Ad Manager</p>
-                <p className="text-2xs text-zinc-500">admin@rocky.com</p>
+                <p className="text-xs font-medium text-zinc-200">{user?.name || 'Ad Manager'}</p>
+                <p className="text-2xs text-zinc-500">{user?.email || 'Not signed in'}</p>
               </div>
-              <button className="flex w-full items-center gap-2 px-3 py-2 text-xs text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200">
+              <button
+                onClick={handleRefreshData}
+                className="flex w-full items-center gap-2 px-3 py-2 text-xs text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200"
+              >
                 <RefreshCw size={13} /> Refresh Data
               </button>
-              <button className="flex w-full items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-zinc-700 hover:text-red-300">
+              <button
+                onClick={handleSignOut}
+                className="flex w-full items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-zinc-700 hover:text-red-300"
+              >
                 <LogOut size={13} /> Sign Out
               </button>
             </div>
