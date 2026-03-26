@@ -36,7 +36,8 @@ export default function Audiences() {
       try {
         const res = await api.getAudiences();
         return res.data || res;
-      } catch {
+      } catch (err) {
+        if (localStorage.getItem('auth_token')) throw err;
         return getMockAudiences().data;
       }
     },

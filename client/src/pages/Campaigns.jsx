@@ -20,7 +20,8 @@ export default function Campaigns() {
       try {
         const res = await api.getCampaigns();
         return res.data || res;
-      } catch {
+      } catch (err) {
+        if (localStorage.getItem('auth_token')) throw err;
         return getMockCampaigns().data;
       }
     },
