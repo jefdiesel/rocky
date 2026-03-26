@@ -9,33 +9,18 @@ const router = Router();
 const META_API = 'https://graph.facebook.com/v19.0';
 const SCOPES = 'ads_management,ads_read,pages_read_engagement,business_management';
 
-// In-memory + DB state store for CSRF (serverless-safe)
-const pendingStates = new Map();
-
 // ── GET /auth/meta — Redirect to Meta OAuth ──────────────────────────────────
-router.get('/meta', async (req, res) => {
+router.get('/meta', (req, res) => {
   const appId = process.env.META_APP_ID;
   if (!appId) {
     return res.status(503).json({ error: 'Meta OAuth is not configured (META_APP_ID missing).' });
   }
 
-  const state = crypto.randomBytes(32).toString('hex');
-  const expiresAt = Date.now() + 10 * 60 * 1000;
-
-  // Store state in memory (works if same instance) and cookie (fallback)
-  pendingStates.set(state, expiresAt);
-
-  // Also store in Supabase for serverless where instances differ
-  if (supabase) {
-    await supabase.from('oauth_states').upsert({ state, expires_at: new Date(expiresAt).toISOString() }).catch(() => {});
-  }
-
-  res.cookie('oauth_state', state, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    maxAge: 10 * 60 * 1000,
-  });
+  // Use app secret hash as CSRF state — deterministic, no storage needed
+  const state = crypto.createHmac('sha256', process.env.META_APP_SECRET || '')
+    .update(appId)
+    .digest('hex')
+    .slice(0, 32);
 
   const redirectUri = process.env.META_REDIRECT_URI || 'http://localhost:3001/api/auth/meta/callback';
 
@@ -53,38 +38,21 @@ router.get('/meta', async (req, res) => {
 router.get('/meta/callback', async (req, res) => {
   try {
     const { code, state } = req.query;
-    const savedState = req.cookies && req.cookies.oauth_state;
 
     if (!code) {
       return res.status(400).json({ error: 'Missing authorization code from Meta.' });
     }
 
-    // Check state: cookie first, then in-memory, then Supabase
-    let stateValid = false;
-    if (state && state === savedState) {
-      stateValid = true;
-    } else if (state && pendingStates.has(state) && pendingStates.get(state) > Date.now()) {
-      stateValid = true;
-      pendingStates.delete(state);
-    } else if (state && supabase) {
-      const { data } = await supabase
-        .from('oauth_states')
-        .select('state')
-        .eq('state', state)
-        .gt('expires_at', new Date().toISOString())
-        .single();
-      if (data) {
-        stateValid = true;
-        await supabase.from('oauth_states').delete().eq('state', state).catch(() => {});
-      }
-    }
+    // Verify state using the same deterministic HMAC
+    const expectedState = crypto.createHmac('sha256', process.env.META_APP_SECRET || '')
+      .update(process.env.META_APP_ID || '')
+      .digest('hex')
+      .slice(0, 32);
 
-    if (!stateValid) {
+    if (state !== expectedState) {
       const clientUrl = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
       return res.redirect(`${clientUrl}/auth/callback?error=CSRF+state+mismatch.+Please+try+again.`);
     }
-
-    res.clearCookie('oauth_state');
 
     const appId = process.env.META_APP_ID;
     const appSecret = process.env.META_APP_SECRET;
