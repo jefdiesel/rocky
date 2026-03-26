@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { RefreshCw, Save, Trash2, ExternalLink, Check, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
+import PageGuide from '../components/common/PageGuide.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 import api from '../services/api.js';
@@ -113,6 +114,16 @@ export default function Settings() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
+      <PageGuide
+        pageKey="settings"
+        title="Settings Quick Guide"
+        tips={[
+          'Connect your Meta account to pull real ad data from the Marketing API',
+          'System User tokens provide server-to-server access without personal login',
+          'Notification preferences are saved to your account automatically',
+          'Clear cache forces a fresh pull from Meta on next page load',
+        ]}
+      />
       <h1 className="text-lg font-semibold text-zinc-100">Settings</h1>
 
       {/* Connected Account */}

@@ -10,6 +10,7 @@ import {
   OPTIMIZATION_GOALS, ATTRIBUTION_WINDOWS, AD_FORMATS,
 } from '../utils/constants.js';
 import { buildUTMUrl } from '../utils/format.js';
+import PageGuide from '../components/common/PageGuide.jsx';
 import api from '../services/api.js';
 
 // --- State management ---
@@ -207,6 +208,16 @@ export default function CampaignBuilder() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
+      <PageGuide
+        pageKey="campaign-builder"
+        title="Campaign Builder Quick Guide"
+        tips={[
+          'Complete all 4 steps: Campaign \u2192 Ad Set \u2192 Ad \u2192 Review before submitting',
+          "Choose 'PAUSED' status to create without going live immediately",
+          'The UTM builder auto-generates tracking parameters for your destination URL',
+          'Save as Draft to come back later without losing your configuration',
+        ]}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold text-zinc-100">Create Campaign</h1>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Upload, ChevronDown, ChevronUp, Search, X } from 'lucide-react';
 import clsx from 'clsx';
+import PageGuide from '../components/common/PageGuide.jsx';
 import DataTable from '../components/common/DataTable.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
 import Modal from '../components/common/Modal.jsx';
@@ -140,6 +141,16 @@ export default function Audiences() {
 
   return (
     <div className="space-y-4">
+      <PageGuide
+        pageKey="audiences"
+        title="Audiences Quick Guide"
+        tips={[
+          'Create custom audiences from pixel data, customer lists, or engagement signals',
+          'Lookalike audiences find new people similar to your best customers',
+          'Use the overlap tool before launching to avoid audience cannibalization',
+          'Audience sizes update within 24-48 hours of creation',
+        ]}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold text-zinc-100">Audiences</h1>

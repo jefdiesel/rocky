@@ -2,6 +2,7 @@ import { useState, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Pause, Play, Trash2, MoreHorizontal, Edit } from 'lucide-react';
+import PageGuide from '../components/common/PageGuide.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
 import DataTable from '../components/common/DataTable.jsx';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
@@ -126,6 +127,16 @@ export default function Campaigns() {
 
   return (
     <div className="space-y-4">
+      <PageGuide
+        pageKey="campaigns"
+        title="Campaigns Quick Guide"
+        tips={[
+          'Click any row to expand and see its ad sets and ads',
+          'Use the status filter to focus on active, paused, or deleted campaigns',
+          'Select multiple rows for bulk pause or delete actions',
+          "Click 'New Campaign' to launch the step-by-step campaign builder",
+        ]}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold text-zinc-100">Campaigns</h1>

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Copy, ChevronDown, Radio, Check } from 'lucide-react';
 import clsx from 'clsx';
+import PageGuide from '../components/common/PageGuide.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 import { formatNumber, formatPercent } from '../utils/format.js';
@@ -142,6 +143,16 @@ export default function Pixels() {
 
   return (
     <div className="space-y-4">
+      <PageGuide
+        pageKey="pixels"
+        title="Pixel Dashboard Quick Guide"
+        tips={[
+          'Green dots mean the pixel fired 100+ events in the last 24 hours',
+          'Yellow means 1-100 events — check your pixel installation',
+          'Match rate shows how well Meta can identify users from your pixel data',
+          'Enable Test Events to see a live stream of incoming pixel fires',
+        ]}
+      />
       <h1 className="text-lg font-semibold text-zinc-100">Pixel Dashboard</h1>
 
       {isLoading ? (

@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Upload, Image, Video, X, Eye, Plus, Copy, Edit, ExternalLink } from 'lucide-react';
 import clsx from 'clsx';
+import PageGuide from '../components/common/PageGuide.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
 import Modal from '../components/common/Modal.jsx';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
@@ -98,6 +99,16 @@ export default function Creative() {
 
   return (
     <div className="space-y-4">
+      <PageGuide
+        pageKey="creative"
+        title="Creative Studio Quick Guide"
+        tips={[
+          'Upload images and videos to your Meta ad account asset library',
+          'Preview how your ads look across FB Feed, IG Feed, Stories, and Reels',
+          'Track copy variant performance to find winning headline/body combinations',
+          'UTM templates auto-tag your destination URLs for clean attribution',
+        ]}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold text-zinc-100">Creative Studio</h1>

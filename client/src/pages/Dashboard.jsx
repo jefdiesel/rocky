@@ -5,6 +5,7 @@ import {
   PieChart, Pie, Cell, BarChart, Bar,
 } from 'recharts';
 import { AlertTriangle } from 'lucide-react';
+import PageGuide from '../components/common/PageGuide.jsx';
 import KPICard from '../components/common/KPICard.jsx';
 import DataTable from '../components/common/DataTable.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
@@ -70,6 +71,16 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-4">
+      <PageGuide
+        pageKey="dashboard"
+        title="Dashboard Quick Guide"
+        tips={[
+          'KPI cards show aggregated metrics for the selected date range across all campaigns',
+          'Dual-axis chart plots spend against conversions to spot efficiency trends',
+          'Red frequency badges flag ad sets above 3x — creative fatigue risk',
+          'Pacing bars compare actual spend vs projected budget to catch over/underspend',
+        ]}
+      />
       {/* KPI Cards */}
       <div className="grid grid-cols-3 gap-3 lg:grid-cols-5 xl:grid-cols-9">
         {kpisLoading
