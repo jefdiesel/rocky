@@ -8,11 +8,17 @@ import Creative from './pages/Creative.jsx';
 import Pixels from './pages/Pixels.jsx';
 import Settings from './pages/Settings.jsx';
 import AuthCallback from './pages/AuthCallback.jsx';
+import Privacy from './pages/Privacy.jsx';
+import Terms from './pages/Terms.jsx';
+import DataDeletion from './pages/DataDeletion.jsx';
 
 export default function App() {
   return (
     <Routes>
       <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/privacy" element={<Layout />}><Route index element={<Privacy />} /></Route>
+      <Route path="/terms" element={<Layout />}><Route index element={<Terms />} /></Route>
+      <Route path="/data-deletion" element={<Layout />}><Route index element={<DataDeletion />} /></Route>
       <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/campaigns" element={<Campaigns />} />
