@@ -46,7 +46,7 @@ export default function Campaigns() {
     { key: 'spend', accessor: 'spend', label: 'Spend', sortable: true, format: (v) => formatCurrency(v), align: 'right' },
     { key: 'results', accessor: 'results', label: 'Results', sortable: true, format: (v) => formatNumber(v), align: 'right' },
     { key: 'cpa', accessor: 'cpa', label: 'CPA', sortable: true, format: (v) => formatCurrency(v), align: 'right' },
-    { key: 'roas', accessor: 'roas', label: 'ROAS', sortable: true, format: (v) => v?.toFixed(2) + 'x', align: 'right' },
+    { key: 'roas', accessor: 'roas', label: 'ROAS', sortable: true, format: (v) => (v != null ? v.toFixed(2) : '0.00') + 'x', align: 'right' },
     {
       key: 'actions', label: 'Actions', width: '80px',
       render: (_, row) => (

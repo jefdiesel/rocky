@@ -38,7 +38,7 @@ export default function Dashboard() {
     { label: 'CPC', value: formatCurrency(kpis.cpc), trend: kpis.cpcTrend },
     { label: 'Conversions', value: formatNumber(kpis.conversions), trend: kpis.conversionsTrend },
     { label: 'CPA', value: formatCurrency(kpis.cpa), trend: kpis.cpaTrend },
-    { label: 'ROAS', value: kpis.roas?.toFixed(2) + 'x', trend: kpis.roasTrend },
+    { label: 'ROAS', value: (kpis.roas != null ? kpis.roas.toFixed(2) : '0.00') + 'x', trend: kpis.roasTrend },
   ] : [];
 
   const breakdownColumns = [
@@ -51,7 +51,7 @@ export default function Dashboard() {
     { key: 'ctr', accessor: 'ctr', label: 'CTR', sortable: true, format: (v) => formatPercent(v), align: 'right' },
     { key: 'conversions', accessor: 'conversions', label: 'Conv.', sortable: true, format: (v) => formatNumber(v), align: 'right' },
     { key: 'cpa', accessor: 'cpa', label: 'CPA', sortable: true, format: (v) => formatCurrency(v), align: 'right' },
-    { key: 'roas', accessor: 'roas', label: 'ROAS', sortable: true, format: (v) => v?.toFixed(2) + 'x', align: 'right' },
+    { key: 'roas', accessor: 'roas', label: 'ROAS', sortable: true, format: (v) => (v != null ? v.toFixed(2) : '0.00') + 'x', align: 'right' },
   ];
 
   const CustomTooltip = ({ active, payload, label }) => {

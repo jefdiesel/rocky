@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Upload, ChevronDown, ChevronUp, Search } from 'lucide-react';
+import { Plus, Upload, ChevronDown, ChevronUp, Search, X } from 'lucide-react';
 import clsx from 'clsx';
 import DataTable from '../components/common/DataTable.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
