@@ -14,7 +14,8 @@ export function useAccounts() {
       try {
         const res = await api.getAccounts();
         return res.data || res;
-      } catch {
+      } catch (err) {
+        if (localStorage.getItem('auth_token')) throw err;
         const mock = getMockAccounts();
         return mock.data;
       }
@@ -25,10 +26,13 @@ export function useAccounts() {
   const accounts = data || [];
 
   useEffect(() => {
-    if (accounts.length > 0 && !selectedAccountId) {
-      const firstId = accounts[0].account_id || accounts[0].id;
-      setSelectedAccountId(firstId);
-      localStorage.setItem('selected_account_id', firstId);
+    if (accounts.length > 0) {
+      const match = accounts.find((a) => (a.account_id || a.id) === selectedAccountId);
+      if (!match) {
+        const firstId = accounts[0].account_id || accounts[0].id;
+        setSelectedAccountId(firstId);
+        localStorage.setItem('selected_account_id', firstId);
+      }
     }
   }, [accounts, selectedAccountId]);
 

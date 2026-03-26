@@ -10,13 +10,16 @@ import {
   getMockPacingData,
 } from '../mocks/dashboardData.js';
 
+const hasAuth = () => !!localStorage.getItem('auth_token');
+
 export function useInsights(dateParams, options = {}) {
   return useQuery({
     queryKey: ['insights', dateParams],
     queryFn: async () => {
       try {
         return await api.getInsights(dateParams);
-      } catch {
+      } catch (err) {
+        if (hasAuth()) throw err;
         return getMockKPIs();
       }
     },
@@ -30,9 +33,9 @@ export function useTimeSeries(dateParams) {
     queryKey: ['timeseries', dateParams],
     queryFn: async () => {
       try {
-        const res = await api.getInsights({ ...dateParams, time_increment: 1 });
-        return res;
-      } catch {
+        return await api.getInsights({ ...dateParams, time_increment: 1 });
+      } catch (err) {
+        if (hasAuth()) throw err;
         return getMockTimeSeries();
       }
     },
@@ -45,9 +48,9 @@ export function useCampaignBreakdown(dateParams) {
     queryKey: ['campaign-breakdown', dateParams],
     queryFn: async () => {
       try {
-        const res = await api.getCampaigns({ ...dateParams, level: 'campaign' });
-        return res;
-      } catch {
+        return await api.getCampaigns({ ...dateParams, level: 'campaign' });
+      } catch (err) {
+        if (hasAuth()) throw err;
         return getMockCampaignBreakdown();
       }
     },
@@ -60,9 +63,9 @@ export function usePlatformSplit(dateParams) {
     queryKey: ['platform-split', dateParams],
     queryFn: async () => {
       try {
-        const res = await api.getInsights({ ...dateParams, breakdowns: 'publisher_platform' });
-        return res;
-      } catch {
+        return await api.getInsights({ ...dateParams, breakdowns: 'publisher_platform' });
+      } catch (err) {
+        if (hasAuth()) throw err;
         return getMockPlatformSplit();
       }
     },
@@ -75,9 +78,9 @@ export function usePlacementBreakdown(dateParams) {
     queryKey: ['placement-breakdown', dateParams],
     queryFn: async () => {
       try {
-        const res = await api.getInsights({ ...dateParams, breakdowns: 'placement' });
-        return res;
-      } catch {
+        return await api.getInsights({ ...dateParams, breakdowns: 'placement' });
+      } catch (err) {
+        if (hasAuth()) throw err;
         return getMockPlacementBreakdown();
       }
     },
@@ -90,9 +93,9 @@ export function useFrequencyData(dateParams) {
     queryKey: ['frequency', dateParams],
     queryFn: async () => {
       try {
-        const res = await api.getInsights({ ...dateParams, fields: 'frequency,reach,impressions', level: 'adset' });
-        return res;
-      } catch {
+        return await api.getInsights({ ...dateParams, fields: 'frequency,reach,impressions', level: 'adset' });
+      } catch (err) {
+        if (hasAuth()) throw err;
         return getMockFrequencyData();
       }
     },
@@ -105,9 +108,9 @@ export function usePacingData() {
     queryKey: ['pacing'],
     queryFn: async () => {
       try {
-        const res = await api.getPacing();
-        return res;
-      } catch {
+        return await api.getPacing();
+      } catch (err) {
+        if (hasAuth()) throw err;
         return getMockPacingData();
       }
     },
