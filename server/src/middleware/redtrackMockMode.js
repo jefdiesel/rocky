@@ -8,18 +8,9 @@ const mockData = require(path.join(__dirname, '..', 'mocks', 'redtrack.json'));
 function redtrackMockMode(req, res, next) {
   const routePath = req.baseUrl + req.path;
 
-  // RedTrack routes always go to real handler — key is in DB
+  // RedTrack + bot config always go to real handlers — data is in DB
   if (routePath.startsWith('/api/redtrack')) return next();
-
-  // ── Bot Config ─────────────────────────────────
-  if (routePath.match(/^\/api\/bot\/config\/?$/) && req.method === 'GET') {
-    return res.json({
-      data: { telegram_token_set: false, telegram_chat_id: '', redtrack_api_key_set: false, roi_threshold: 25 },
-    });
-  }
-  if (routePath.match(/^\/api\/bot\/config\/?$/) && req.method === 'PUT') {
-    return res.json({ data: { saved: true } });
-  }
+  if (routePath.startsWith('/api/bot/config')) return next();
 
   // ── Alerts ─────────────────────────────────────
   if (routePath.match(/^\/api\/bot\/alerts\/?$/) && req.method === 'GET') {
