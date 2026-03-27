@@ -1,5 +1,5 @@
 -- ============================================================
--- Rocky Ads Platform — Supabase Postgres Schema
+-- Remi — Supabase Postgres Schema
 -- ============================================================
 
 -- Enable UUID generation

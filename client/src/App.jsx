@@ -11,10 +11,12 @@ import AuthCallback from './pages/AuthCallback.jsx';
 import Privacy from './pages/Privacy.jsx';
 import Terms from './pages/Terms.jsx';
 import DataDeletion from './pages/DataDeletion.jsx';
+import Landing from './pages/Landing.jsx';
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/welcome" element={<Landing />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/privacy" element={<Layout />}><Route index element={<Privacy />} /></Route>
       <Route path="/terms" element={<Layout />}><Route index element={<Terms />} /></Route>

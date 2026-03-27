@@ -32,7 +32,7 @@ export default function Sidebar({ selectedAccount, sidebarOpen, setSidebarOpen }
       <div className="flex h-12 items-center justify-between border-b border-zinc-800 px-4">
         <div className="flex items-center gap-2">
           <Zap size={20} className="flex-shrink-0 text-primary-500" />
-          {!collapsed && <span className="text-sm font-bold tracking-tight text-zinc-100">Rocky Ads</span>}
+          {!collapsed && <span className="text-sm font-bold tracking-tight text-zinc-100">Remi</span>}
         </div>
         {/* Close button on mobile */}
         <button

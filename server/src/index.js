@@ -20,6 +20,7 @@ const pixelRoutes = require('./routes/pixels');
 const creativeRoutes = require('./routes/creative');
 const utmRoutes = require('./routes/utm');
 const settingsRoutes = require('./routes/settings');
+const waitlistRoutes = require('./routes/waitlist');
 
 const app = express();
 
@@ -62,6 +63,7 @@ app.use('/api/pixels', pixelRoutes);
 app.use('/api/creative', creativeRoutes);
 app.use('/api/utm', utmRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/waitlist', waitlistRoutes);
 
 // ── Health check ─────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => {
@@ -97,9 +99,9 @@ app.use((err, _req, res, _next) => {
 if (require.main === module) {
   const PORT = parseInt(process.env.PORT, 10) || 3001;
   app.listen(PORT, async () => {
-    console.log(`[rocky] Server listening on port ${PORT}`);
+    console.log(`[remi] Server listening on port ${PORT}`);
     if (!process.env.META_APP_ID) {
-      console.log('[rocky] META_APP_ID not set — running in mock mode');
+      console.log('[remi] META_APP_ID not set — running in mock mode');
     }
 
     const supabase = require('./services/supabase');

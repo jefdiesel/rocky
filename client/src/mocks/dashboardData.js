@@ -119,9 +119,9 @@ export function getMockAccounts() {
   return {
     _mock: true,
     data: [
-      { id: 'act_123456789', name: 'Rocky Main Account', currency: 'USD', timezone: 'America/New_York', status: 1 },
-      { id: 'act_987654321', name: 'Rocky EU Account', currency: 'EUR', timezone: 'Europe/London', status: 1 },
-      { id: 'act_555555555', name: 'Rocky Test Account', currency: 'USD', timezone: 'America/Los_Angeles', status: 2 },
+      { id: 'act_123456789', name: 'Remi Main Account', currency: 'USD', timezone: 'America/New_York', status: 1 },
+      { id: 'act_987654321', name: 'Remi EU Account', currency: 'EUR', timezone: 'Europe/London', status: 1 },
+      { id: 'act_555555555', name: 'Remi Test Account', currency: 'USD', timezone: 'America/Los_Angeles', status: 2 },
     ],
   };
 }
@@ -204,7 +204,7 @@ export function getMockPixels() {
     _mock: true,
     data: [
       {
-        id: 'px_123456', name: 'Rocky Main Pixel', status: 'ACTIVE',
+        id: 'px_123456', name: 'Remi Main Pixel', status: 'ACTIVE',
         events: [
           { name: 'PageView', count_24h: 45678, match_rate: 67.8, status: 'healthy' },
           { name: 'ViewContent', count_24h: 12345, match_rate: 72.3, status: 'healthy' },
@@ -216,7 +216,7 @@ export function getMockPixels() {
         ],
       },
       {
-        id: 'px_789012', name: 'Rocky Staging Pixel', status: 'INACTIVE',
+        id: 'px_789012', name: 'Remi Staging Pixel', status: 'INACTIVE',
         events: [
           { name: 'PageView', count_24h: 0, match_rate: 0, status: 'error' },
           { name: 'ViewContent', count_24h: 0, match_rate: 0, status: 'error' },

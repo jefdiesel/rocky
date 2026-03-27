@@ -6,11 +6,11 @@ export default function Terms() {
       <div className="space-y-6 text-sm leading-relaxed text-zinc-300">
         <section>
           <h2 className="mb-2 text-base font-semibold text-zinc-100">1. Acceptance</h2>
-          <p>By using AdFlow, you agree to these terms. If you do not agree, do not use the service.</p>
+          <p>By using Remi, you agree to these terms. If you do not agree, do not use the service.</p>
         </section>
         <section>
           <h2 className="mb-2 text-base font-semibold text-zinc-100">2. Service Description</h2>
-          <p>AdFlow is an ad management tool that connects to the Meta Marketing API to help you create, manage, and monitor advertising campaigns across Facebook and Instagram.</p>
+          <p>Remi is an ad management tool that connects to the Meta Marketing API to help you create, manage, and monitor advertising campaigns across Facebook and Instagram.</p>
         </section>
         <section>
           <h2 className="mb-2 text-base font-semibold text-zinc-100">3. Account Responsibilities</h2>
@@ -18,15 +18,15 @@ export default function Terms() {
         </section>
         <section>
           <h2 className="mb-2 text-base font-semibold text-zinc-100">4. Ad Spend</h2>
-          <p>AdFlow facilitates campaign creation and management but does not process payments. All ad spend is billed directly by Meta through your connected ad accounts.</p>
+          <p>Remi facilitates campaign creation and management but does not process payments. All ad spend is billed directly by Meta through your connected ad accounts.</p>
         </section>
         <section>
           <h2 className="mb-2 text-base font-semibold text-zinc-100">5. Limitation of Liability</h2>
-          <p>AdFlow is provided "as is" without warranties. We are not liable for any campaign performance, ad spend, or policy violations resulting from your use of the platform.</p>
+          <p>Remi is provided "as is" without warranties. We are not liable for any campaign performance, ad spend, or policy violations resulting from your use of the platform.</p>
         </section>
         <section>
           <h2 className="mb-2 text-base font-semibold text-zinc-100">6. Termination</h2>
-          <p>You may stop using AdFlow at any time by disconnecting your Meta account. We reserve the right to suspend access for violations of these terms.</p>
+          <p>You may stop using Remi at any time by disconnecting your Meta account. We reserve the right to suspend access for violations of these terms.</p>
         </section>
         <section>
           <h2 className="mb-2 text-base font-semibold text-zinc-100">7. Contact</h2>

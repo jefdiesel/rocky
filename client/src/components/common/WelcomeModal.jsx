@@ -73,7 +73,7 @@ export default function WelcomeModal() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
                   <Megaphone size={16} className="text-white" />
                 </div>
-                <span className="text-lg font-bold text-zinc-100">AdFlow</span>
+                <span className="text-lg font-bold text-zinc-100">Remi</span>
               </div>
               <h2 className="text-xl font-bold text-zinc-100">Manage your Facebook & Instagram ads in one place.</h2>
               <p className="mt-2 text-sm text-zinc-400">

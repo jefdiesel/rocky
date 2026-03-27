@@ -344,8 +344,8 @@ export default function Audiences() {
             <div>
               <label className="mb-1 block text-2xs text-zinc-500">Pixel</label>
               <select className="w-full">
-                <option value="px_123456">Rocky Main Pixel (px_123456)</option>
-                <option value="px_789012">Rocky Staging Pixel (px_789012)</option>
+                <option value="px_123456">Remi Main Pixel (px_123456)</option>
+                <option value="px_789012">Remi Staging Pixel (px_789012)</option>
               </select>
             </div>
             <div>
@@ -492,8 +492,8 @@ export default function Audiences() {
               <label className="mb-1 block text-2xs text-zinc-500">App</label>
               <select className="w-full">
                 <option>Select an app...</option>
-                <option>Rocky iOS App</option>
-                <option>Rocky Android App</option>
+                <option>Remi iOS App</option>
+                <option>Remi Android App</option>
               </select>
             </div>
             <div>
