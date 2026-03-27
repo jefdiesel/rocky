@@ -5,11 +5,60 @@ const { verifyToken } = require('../middleware/auth');
 
 const router = Router();
 
-// ── GET /redtrack/campaigns — Return cached RedTrack data ────────────────────
+const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
+
+// ── Shared sync logic ────────────────────────────────────────────────────────
+async function syncFromRedTrack() {
+  const apiKey = process.env.REDTRACK_API_KEY;
+  if (!apiKey || !supabase) return [];
+
+  const rt = new RedTrackAPI(apiKey);
+  const result = await rt.getCampaigns();
+  if (!result.success || !result.data) return [];
+
+  const rows = RedTrackAPI.normalize(Array.isArray(result.data) ? result.data : []);
+
+  if (rows.length > 0) {
+    await supabase.from('redtrack_cache').insert(rows.map((r) => ({
+      campaign_id: r.campaign_id,
+      campaign_name: r.campaign_name,
+      epc: r.epc,
+      roi: r.roi,
+      profit: r.profit,
+      clicks: r.clicks,
+      conversions: r.conversions,
+      revenue: r.revenue,
+      cost: r.cost,
+    }))).catch((err) => console.error('[redtrack] Cache insert error:', err.message));
+  }
+
+  return rows;
+}
+
+// ── GET /redtrack/campaigns — Auto-sync if cache is stale, then return ───────
 router.get('/campaigns', verifyToken, async (req, res) => {
   try {
     if (!supabase) return res.status(503).json({ error: 'Database unavailable.' });
 
+    // Check cache freshness
+    const { data: latest } = await supabase
+      .from('redtrack_cache')
+      .select('synced_at')
+      .order('synced_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    const isStale = !latest || (Date.now() - new Date(latest.synced_at).getTime()) > CACHE_TTL;
+
+    // Auto-sync if stale and API key is set
+    if (isStale && process.env.REDTRACK_API_KEY) {
+      const fresh = await syncFromRedTrack();
+      if (fresh.length > 0) {
+        return res.json({ data: fresh, synced_at: new Date().toISOString() });
+      }
+    }
+
+    // Return cached data
     const { data, error } = await supabase
       .from('redtrack_cache')
       .select('*')
@@ -41,39 +90,7 @@ router.get('/campaigns', verifyToken, async (req, res) => {
 // ── GET /redtrack/sync — Force manual sync ───────────────────────────────────
 router.get('/sync', verifyToken, async (req, res) => {
   try {
-    const apiKey = process.env.REDTRACK_API_KEY;
-    if (!apiKey) return res.status(503).json({ error: 'REDTRACK_API_KEY not configured.' });
-    if (!supabase) return res.status(503).json({ error: 'Database unavailable.' });
-
-    const rt = new RedTrackAPI(apiKey);
-    const result = await rt.getCampaigns();
-
-    if (!result.success) {
-      return res.status(result.error.status || 502).json({ error: result.error.message });
-    }
-
-    const rows = RedTrackAPI.normalize(result.data);
-
-    if (rows.length > 0) {
-      const { error: upsertErr } = await supabase
-        .from('redtrack_cache')
-        .insert(rows.map((r) => ({
-          campaign_id: r.campaign_id,
-          campaign_name: r.campaign_name,
-          epc: r.epc,
-          roi: r.roi,
-          profit: r.profit,
-          clicks: r.clicks,
-          conversions: r.conversions,
-          revenue: r.revenue,
-          cost: r.cost,
-        })));
-
-      if (upsertErr) {
-        console.error('[redtrack] Cache insert error:', upsertErr.message);
-      }
-    }
-
+    const rows = await syncFromRedTrack();
     return res.json({ data: rows, synced_at: new Date().toISOString() });
   } catch (err) {
     console.error('[redtrack] Sync error:', err.message);
