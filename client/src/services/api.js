@@ -37,13 +37,11 @@ async function request(endpoint, options = {}) {
     let data;
     try { data = await response.json(); } catch { data = null; }
 
-    // Auto-redirect to re-auth on 401 (invalid/expired session)
-    // But skip if we're already on the auth callback to prevent loops
-    if (response.status === 401 && token && !window.location.pathname.startsWith('/auth')) {
+    // On 401, clear stale tokens but don't redirect — let pages handle it
+    // (pages fall back to mock data or show error states)
+    if (response.status === 401 && token) {
       localStorage.removeItem('auth_token');
       localStorage.removeItem('meta_token');
-      window.location.href = '/welcome';
-      return new Promise(() => {}); // never resolves, page is navigating
     }
 
     const message = data?.error || data?.message || getErrorMessage(response.status);
