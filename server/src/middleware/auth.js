@@ -21,7 +21,7 @@ async function verifyToken(req, res, next) {
   try {
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at, preferences, tiktok_access_token, tiktok_user_id')
+      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at, preferences')
       .eq('session_token', token)
       .single();
 
@@ -43,7 +43,6 @@ async function verifyToken(req, res, next) {
     // Decrypt Meta access token for API use
     if (user.access_token) user.access_token = decrypt(user.access_token);
     if (user.system_token) user.system_token = decrypt(user.system_token);
-    if (user.tiktok_access_token) user.tiktok_access_token = decrypt(user.tiktok_access_token);
 
     req.user = user;
     next();
