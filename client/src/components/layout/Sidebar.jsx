@@ -82,10 +82,9 @@ export default function Sidebar({ selectedAccount, sidebarOpen, setSidebarOpen, 
             to={to}
             end={to === '/' || to === '/tiktok/dashboard'}
             onClick={() => setSidebarOpen(false)}
-            title={collapsed ? label : undefined}
             className={({ isActive }) =>
               clsx(
-                'mx-2 mb-0.5 flex items-center gap-2.5 rounded-md px-2.5 py-2 text-xs font-medium transition-colors',
+                'group relative mx-2 mb-0.5 flex items-center gap-2.5 rounded-md px-2.5 py-2 text-xs font-medium transition-colors',
                 isActive
                   ? 'bg-primary-600/15 text-primary-400'
                   : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200',
@@ -95,6 +94,13 @@ export default function Sidebar({ selectedAccount, sidebarOpen, setSidebarOpen, 
           >
             <Icon size={16} className="flex-shrink-0" />
             {!collapsed && <span>{label}</span>}
+            {collapsed && (
+              <div className="absolute left-full ml-2 hidden group-hover:flex items-center z-50">
+                <div className="rounded-md bg-zinc-700 px-2.5 py-1.5 text-xs font-medium text-zinc-100 shadow-lg whitespace-nowrap">
+                  {label}
+                </div>
+              </div>
+            )}
           </NavLink>
         ))}
       </nav>
