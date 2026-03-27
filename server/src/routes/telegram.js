@@ -7,17 +7,29 @@ const { decrypt } = require('../services/crypto');
 
 const router = Router();
 
+// ── Get bot credentials from DB ──────────────────────────────────────────────
+async function getBotCredentials() {
+  if (!supabase) return null;
+  try {
+    const { data } = await supabase.from('bot_config').select('telegram_token, telegram_chat_id').limit(1).maybeSingle();
+    if (data?.telegram_token && data?.telegram_chat_id) {
+      const { decrypt } = require('../services/crypto');
+      return { token: decrypt(data.telegram_token), chatId: data.telegram_chat_id };
+    }
+  } catch {}
+  return null;
+}
+
 // ── POST /telegram/webhook — Receive Telegram updates (NO auth — from Telegram) ─
 router.post('/webhook', async (req, res) => {
   try {
     const update = req.body;
     if (!update) return res.sendStatus(200);
 
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
-    if (!botToken || !chatId) return res.sendStatus(200);
+    const creds = await getBotCredentials();
+    if (!creds) return res.sendStatus(200);
 
-    const bot = new TelegramBot(botToken, chatId);
+    const bot = new TelegramBot(creds.token, creds.chatId);
 
     // Handle callback queries (inline keyboard buttons)
     if (update.callback_query) {
@@ -61,11 +73,11 @@ router.post('/webhook', async (req, res) => {
 
 // ── GET /telegram/status — Check bot connection ──────────────────────────────
 router.get('/status', verifyToken, async (req, res) => {
-  const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  if (!botToken) return res.json({ data: { connected: false, reason: 'TELEGRAM_BOT_TOKEN not set' } });
-
   try {
-    const bot = new TelegramBot(botToken, '');
+    const creds = await getBotCredentials();
+    if (!creds) return res.json({ data: { connected: false, reason: 'Bot token not configured in Settings' } });
+
+    const bot = new TelegramBot(creds.token, '');
     const result = await bot.call('getMe');
     return res.json({ data: { connected: result.success, bot: result.data || null } });
   } catch (err) {
@@ -75,41 +87,43 @@ router.get('/status', verifyToken, async (req, res) => {
 
 // ── POST /telegram/test — Send test alert ────────────────────────────────────
 router.post('/test', verifyToken, async (req, res) => {
-  const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!botToken || !chatId) return res.status(503).json({ error: 'Telegram not configured.' });
+  try {
+    const creds = await getBotCredentials();
+    if (!creds) return res.status(503).json({ error: 'Telegram not configured. Save bot token and chat ID in Settings.' });
 
-  const bot = new TelegramBot(botToken, chatId);
-  const result = await bot.sendMessage('✅ <b>Test Alert</b>\n\nRemi is connected and working.');
-  return res.json({ data: { sent: result.success } });
+    const bot = new TelegramBot(creds.token, creds.chatId);
+    const result = await bot.sendMessage('✅ <b>Test Alert</b>\n\nRemi is connected and working.');
+    return res.json({ data: { sent: result.success } });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
 });
 
 // ── Handlers ─────────────────────────────────────────────────────────────────
 
 async function handlePause(bot, campaignId, queryId, messageId) {
   try {
-    // Find a user with access token to make the Meta API call
+    await bot.answerCallbackQuery(queryId, 'Pausing...').catch(() => {});
+
     const user = await getFirstUser();
     if (!user) {
-      await bot.answerCallbackQuery(queryId, 'No authenticated user found.');
+      await bot.sendMessage('❌ No authenticated user found. Log into Remi first.');
       return;
     }
 
-    const meta = new MetaAPI(decrypt(user.access_token));
+    const token = decrypt(user.access_token);
+    const meta = new MetaAPI(token);
     const result = await meta.updateCampaign(campaignId, { status: 'PAUSED' });
 
     if (result.success) {
-      await bot.answerCallbackQuery(queryId, 'Campaign paused!');
       await bot.sendMessage(`⏸ <b>PAUSED</b> — Campaign ${campaignId} has been paused via Remi.`);
       await logAlert(campaignId, null, null, null, 'paused');
     } else {
-      const errMsg = result.error?.message || 'Unknown error';
-      await bot.answerCallbackQuery(queryId, 'Failed: ' + errMsg);
-      await bot.sendMessage(`❌ Failed to pause campaign: ${errMsg}`);
+      await bot.sendMessage(`❌ Failed to pause: ${result.error?.message || 'Unknown error'}`);
     }
   } catch (err) {
     console.error('[telegram] Pause error:', err.message);
-    await bot.answerCallbackQuery(queryId, 'Error pausing campaign.');
+    await bot.sendMessage(`❌ Pause error: ${err.message}`);
   }
 }
 
