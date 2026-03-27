@@ -1,0 +1,83 @@
+{
+  "campaigns": [
+    {
+      "campaign_id": "rt_001",
+      "campaign_name": "Summer Sale - Traffic",
+      "clicks": 8420,
+      "conversions": 312,
+      "revenue": 9360.00,
+      "cost": 5840.50,
+      "profit": 3519.50,
+      "roi": 60.3,
+      "epc": 1.11
+    },
+    {
+      "campaign_id": "rt_002",
+      "campaign_name": "Brand Awareness Q1",
+      "clicks": 15200,
+      "conversions": 89,
+      "revenue": 2670.00,
+      "cost": 4800.00,
+      "profit": -2130.00,
+      "roi": -44.4,
+      "epc": 0.18
+    },
+    {
+      "campaign_id": "rt_003",
+      "campaign_name": "Retargeting - Warm",
+      "clicks": 3100,
+      "conversions": 245,
+      "revenue": 12250.00,
+      "cost": 2100.00,
+      "profit": 10150.00,
+      "roi": 483.3,
+      "epc": 3.95
+    },
+    {
+      "campaign_id": "rt_004",
+      "campaign_name": "Lead Gen - Webinar",
+      "clicks": 5600,
+      "conversions": 420,
+      "revenue": 4200.00,
+      "cost": 3200.00,
+      "profit": 1000.00,
+      "roi": 31.3,
+      "epc": 0.75
+    },
+    {
+      "campaign_id": "rt_005",
+      "campaign_name": "Holiday Push - DTC",
+      "clicks": 12800,
+      "conversions": 580,
+      "revenue": 23200.00,
+      "cost": 8500.00,
+      "profit": 14700.00,
+      "roi": 172.9,
+      "epc": 1.81
+    },
+    {
+      "campaign_id": "rt_006",
+      "campaign_name": "App Install iOS",
+      "clicks": 6200,
+      "conversions": 890,
+      "revenue": 3560.00,
+      "cost": 4120.00,
+      "profit": -560.00,
+      "roi": -13.6,
+      "epc": 0.57
+    }
+  ],
+  "mappings": [
+    { "redtrack_campaign_name": "Summer Sale - Traffic", "meta_campaign_id": "mock_camp_1", "meta_campaign_name": "Summer Sale 2026" },
+    { "redtrack_campaign_name": "Retargeting - Warm", "meta_campaign_id": "mock_camp_3", "meta_campaign_name": "Retargeting Hot Audiences" },
+    { "redtrack_campaign_name": "Lead Gen - Webinar", "meta_campaign_id": "mock_camp_4", "meta_campaign_name": "Lead Gen Funnel" }
+  ],
+  "alerts": [
+    { "campaign_id": "rt_002", "campaign_name": "Brand Awareness Q1", "roi": -44.4, "threshold": 25, "action": "paused", "created_at": "2026-03-26T14:30:00Z" },
+    { "campaign_id": "rt_006", "campaign_name": "App Install iOS", "roi": -13.6, "threshold": 25, "action": "snoozed", "created_at": "2026-03-26T16:00:00Z" },
+    { "campaign_id": "rt_002", "campaign_name": "Brand Awareness Q1", "roi": -38.2, "threshold": 25, "action": "ignored", "created_at": "2026-03-25T10:15:00Z" }
+  ],
+  "snooze": [
+    { "campaign_id": "rt_006", "campaign_name": "App Install iOS", "snoozed_until": "2026-03-27T17:00:00Z" }
+  ]
+}

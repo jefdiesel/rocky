@@ -4,7 +4,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, BarChart, Bar,
 } from 'recharts';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
+import clsx from 'clsx';
 import PageGuide from '../components/common/PageGuide.jsx';
 import KPICard from '../components/common/KPICard.jsx';
 import DataTable from '../components/common/DataTable.jsx';
@@ -15,6 +16,8 @@ import {
   useInsights, useTimeSeries, useCampaignBreakdown,
   usePlatformSplit, usePlacementBreakdown, useFrequencyData, usePacingData,
 } from '../hooks/useInsights.js';
+import { useRedtrackCampaigns } from '../hooks/useRedtrack.js';
+import api from '../services/api.js';
 
 export default function Dashboard() {
   const { dateRange } = useOutletContext();
@@ -27,8 +30,19 @@ export default function Dashboard() {
   const { data: placements, isLoading: pmLoading } = usePlacementBreakdown(dateParams);
   const { data: frequency, isLoading: freqLoading } = useFrequencyData(dateParams);
   const { data: pacing, isLoading: pacingLoading } = usePacingData();
+  const { data: rtCampaigns } = useRedtrackCampaigns();
 
   const [breakdownLevel, setBreakdownLevel] = useState('campaign');
+  const [rtSyncing, setRtSyncing] = useState(false);
+
+  // Aggregate RedTrack totals
+  const rtData = rtCampaigns || [];
+  const rtTotals = rtData.reduce((acc, c) => ({
+    revenue: acc.revenue + (c.revenue || 0),
+    profit: acc.profit + (c.profit || 0),
+    cost: acc.cost + (c.cost || 0),
+  }), { revenue: 0, profit: 0, cost: 0 });
+  const blendedROI = rtTotals.cost > 0 ? ((rtTotals.revenue - rtTotals.cost) / rtTotals.cost) * 100 : 0;
 
   const kpiCards = kpis ? [
     { label: 'Total Spend', value: formatCurrency(kpis.spend), trend: kpis.spendTrend },
@@ -40,6 +54,9 @@ export default function Dashboard() {
     { label: 'Conversions', value: formatNumber(kpis.conversions), trend: kpis.conversionsTrend },
     { label: 'CPA', value: formatCurrency(kpis.cpa), trend: kpis.cpaTrend },
     { label: 'ROAS', value: (kpis.roas != null ? kpis.roas.toFixed(2) : '0.00') + 'x', trend: kpis.roasTrend },
+    { label: 'Revenue', value: formatCurrency(rtTotals.revenue), trend: null },
+    { label: 'Profit', value: formatCurrency(rtTotals.profit), trend: null },
+    { label: 'ROI', value: blendedROI.toFixed(1) + '%', trend: null },
   ] : [];
 
   const breakdownColumns = [
@@ -53,6 +70,22 @@ export default function Dashboard() {
     { key: 'conversions', accessor: 'conversions', label: 'Conv.', sortable: true, format: (v) => formatNumber(v), align: 'right' },
     { key: 'cpa', accessor: 'cpa', label: 'CPA', sortable: true, format: (v) => formatCurrency(v), align: 'right' },
     { key: 'roas', accessor: 'roas', label: 'ROAS', sortable: true, format: (v) => (v != null ? v.toFixed(2) : '0.00') + 'x', align: 'right' },
+    { key: 'revenue', accessor: 'rt_revenue', label: 'Revenue', sortable: true, format: (v) => v ? formatCurrency(v) : '--', align: 'right' },
+    { key: 'profit', accessor: 'rt_profit', label: 'Profit', sortable: true, format: (v) => v ? formatCurrency(v) : '--', align: 'right' },
+    {
+      key: 'roi', accessor: 'rt_roi', label: 'ROI%', sortable: true, align: 'right',
+      render: (v) => {
+        if (v == null) return <span className="text-zinc-600">--</span>;
+        return (
+          <span className={clsx('font-medium',
+            v > 40 ? 'text-emerald-400' : v > 25 ? 'text-amber-400' : 'text-red-400'
+          )}>
+            {v.toFixed(1)}%
+          </span>
+        );
+      },
+    },
+    { key: 'epc', accessor: 'rt_epc', label: 'EPC', sortable: true, format: (v) => v ? `$${v.toFixed(2)}` : '--', align: 'right' },
   ];
 
   const CustomTooltip = ({ active, payload, label }) => {

@@ -150,6 +150,22 @@ export const api = {
   },
   deleteDraft: (id) => request(`/campaigns/draft/${id}`, { method: 'DELETE' }),
 
+  // ── RedTrack ─────────────────────────────────────────────────────────────────
+  getRedtrackCampaigns: () => request('/redtrack/campaigns'),
+  syncRedtrack: () => request('/redtrack/sync'),
+  getRedtrackMappings: () => request('/redtrack/mappings'),
+  createRedtrackMapping: (data) => request('/redtrack/mappings', { method: 'POST', body: JSON.stringify(data) }),
+  deleteRedtrackMapping: (id) => request(`/redtrack/mappings/${id}`, { method: 'DELETE' }),
+
+  // ── Bot / Telegram ──────────────────────────────────────────────────────────
+  getBotConfig: () => request('/bot/config'),
+  saveBotConfig: (data) => request('/bot/config', { method: 'PUT', body: JSON.stringify(data) }),
+  getAlertHistory: () => request('/bot/alerts'),
+  getSnoozeState: () => request('/bot/snooze'),
+  cancelSnooze: (campaignId) => request(`/bot/snooze/${campaignId}`, { method: 'DELETE' }),
+  getTelegramStatus: () => request('/telegram/status'),
+  testTelegram: () => request('/telegram/test', { method: 'POST' }),
+
   // ── TikTok ──────────────────────────────────────────────────────────────────
   tiktok: {
     getAccounts: () => request('/tiktok/accounts'),

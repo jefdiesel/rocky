@@ -14,6 +14,7 @@ import DataDeletion from './pages/DataDeletion.jsx';
 import Landing from './pages/Landing.jsx';
 
 import CreativeStudio from './pages/CreativeStudio.jsx';
+import BotSettings from './pages/BotSettings.jsx';
 
 // TikTok pages
 import TikTokCampaigns from './pages/TikTokCampaigns.jsx';
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="/creative" element={<Creative />} />
         <Route path="/pixels" element={<Pixels />} />
         <Route path="/studio" element={<CreativeStudio />} />
+        <Route path="/bot" element={<BotSettings />} />
         <Route path="/settings" element={<Settings />} />
         {/* TikTok routes */}
         <Route path="/tiktok/dashboard" element={<TikTokDashboard />} />
