@@ -1,23 +1,28 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { setToken } from '../services/auth.js';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 
 export default function AuthCallback() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const token = searchParams.get('token');
     if (token) {
       setToken(token);
+      // Nuke all cached queries — they were fetched without auth
+      // and contain mock data that will stick for 15min otherwise
+      queryClient.clear();
       navigate('/', { replace: true });
     } else {
       const err = searchParams.get('error') || 'No token received from Meta OAuth';
       setError(err);
     }
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, queryClient]);
 
   if (error) {
     return (
