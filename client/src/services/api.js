@@ -37,11 +37,15 @@ async function request(endpoint, options = {}) {
     let data;
     try { data = await response.json(); } catch { data = null; }
 
-    // On 401, clear stale tokens but don't redirect — let pages handle it
-    // (pages fall back to mock data or show error states)
+    // On 401 with explicit session errors, clear the session token only
+    // Don't clear meta_token (system user token entered manually)
+    // Don't clear on Meta API errors (token expired, rate limit, etc.)
     if (response.status === 401 && token) {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('meta_token');
+      const msg = data?.error || '';
+      const isSessionError = msg.includes('Invalid session') || msg.includes('Session has expired');
+      if (isSessionError) {
+        localStorage.removeItem('auth_token');
+      }
     }
 
     const message = data?.error || data?.message || getErrorMessage(response.status);
