@@ -5,6 +5,7 @@ import { Bell, User, ChevronDown, LogOut, RefreshCw, Menu } from 'lucide-react';
 import clsx from 'clsx';
 import DateRangePicker from '../common/DateRangePicker.jsx';
 import api from '../../services/api.js';
+import { clearAllTokens } from '../../services/auth.js';
 
 export default function TopBar({ accounts, selectedAccount, onSelectAccount, dateRange, onMenuToggle, platform, onTogglePlatform }) {
   const navigate = useNavigate();
@@ -39,8 +40,7 @@ export default function TopBar({ accounts, selectedAccount, onSelectAccount, dat
     } catch {
       // server may be unavailable, proceed anyway
     }
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('meta_token');
+    clearAllTokens();
     localStorage.removeItem('selected_account_id');
     setUserOpen(false);
     navigate('/settings');

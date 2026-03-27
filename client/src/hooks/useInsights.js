@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import api from '../services/api.js';
+import api, { isAuthenticated } from '../services/api.js';
 import {
   getMockKPIs,
   getMockTimeSeries,
@@ -11,14 +11,12 @@ import {
   getMockPacingData,
 } from '../mocks/dashboardData.js';
 
-const hasAuth = () => !!(localStorage.getItem('auth_token') || localStorage.getItem('meta_token'));
-
 function safeFetch(fn, mockFn) {
   return async () => {
     try {
       return await fn();
     } catch (err) {
-      if (!hasAuth()) return mockFn();
+      if (!isAuthenticated()) return mockFn();
       if (err.status === 401) throw err;
       console.warn('[insights]', err.message);
       return { data: [] };

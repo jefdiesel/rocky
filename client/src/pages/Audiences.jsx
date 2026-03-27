@@ -9,7 +9,7 @@ import Modal from '../components/common/Modal.jsx';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 import { formatNumber, formatDate } from '../utils/format.js';
 import { EVENT_TYPES } from '../utils/constants.js';
-import api from '../services/api.js';
+import api, { isAuthenticated } from '../services/api.js';
 import { getMockAudiences } from '../mocks/dashboardData.js';
 
 const AUDIENCE_TABS = ['Customer List', 'Website', 'Engagement', 'App Activity'];
@@ -43,7 +43,7 @@ export default function Audiences() {
         const res = await api.getAudiences();
         return res.data || [];
       } catch (err) {
-        if (!localStorage.getItem('auth_token') && !localStorage.getItem('meta_token')) return getMockAudiences().data;
+        if (!isAuthenticated()) return getMockAudiences().data;
         if (err.status === 401) throw err;
         console.warn('[audiences]', err.message);
         return [];

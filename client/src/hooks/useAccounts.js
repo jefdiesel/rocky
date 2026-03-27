@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState, useCallback, useEffect } from 'react';
-import api from '../services/api.js';
+import api, { isAuthenticated } from '../services/api.js';
 import { getMockAccounts } from '../mocks/dashboardData.js';
 
 export function useAccounts() {
@@ -22,7 +22,7 @@ export function useAccounts() {
         const res = await api.getAccounts();
         return res.data || res;
       } catch (err) {
-        if (localStorage.getItem('auth_token') || localStorage.getItem('meta_token')) throw err;
+        if (isAuthenticated()) throw err;
         const mock = getMockAccounts();
         return mock.data;
       }

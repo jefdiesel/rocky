@@ -7,7 +7,7 @@ import StatusBadge from '../components/common/StatusBadge.jsx';
 import DataTable from '../components/common/DataTable.jsx';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 import { formatCurrency, formatNumber } from '../utils/format.js';
-import api from '../services/api.js';
+import api, { isAuthenticated } from '../services/api.js';
 import { getMockCampaigns } from '../mocks/dashboardData.js';
 
 export default function Campaigns() {
@@ -60,7 +60,7 @@ export default function Campaigns() {
         const res = await api.getCampaigns();
         return res.data || [];
       } catch (err) {
-        if (!localStorage.getItem('auth_token') && !localStorage.getItem('meta_token')) return getMockCampaigns().data;
+        if (!isAuthenticated()) return getMockCampaigns().data;
         if (err.status === 401) throw err;
         console.warn('[campaigns]', err.message);
         return [];

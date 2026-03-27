@@ -5,7 +5,8 @@ import clsx from 'clsx';
 import PageGuide from '../components/common/PageGuide.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
-import api from '../services/api.js';
+import api, { isAuthenticated } from '../services/api.js';
+import { setToken, getStoredSystemToken } from '../services/auth.js';
 
 const DEFAULT_UTM = {
   source: 'facebook',
@@ -33,7 +34,7 @@ function loadPref(key, fallback) {
 
 export default function Settings() {
   const queryClient = useQueryClient();
-  const [token, setToken] = useState(() => localStorage.getItem('meta_token') || '');
+  const [token, setTokenInput] = useState(() => getStoredSystemToken());
   const [tokenSaved, setTokenSaved] = useState(false);
   const [clearingCache, setClearingCache] = useState(false);
   const [cacheCleared, setCacheCleared] = useState(false);
@@ -47,7 +48,7 @@ export default function Settings() {
 
   // Load preferences from API on mount (overrides localStorage if server has data)
   useEffect(() => {
-    if (!localStorage.getItem('auth_token')) return;
+    if (!isAuthenticated()) return;
     api.getMe().then((res) => {
       const prefs = res.data?.preferences;
       if (prefs) {
@@ -80,7 +81,7 @@ export default function Settings() {
         const res = await api.getMe();
         return { connected: true, account_name: res.data?.name, token_expires: res.data?.token_expiry, meta_token_expired: res.data?.meta_token_expired };
       } catch {
-        return { connected: !!localStorage.getItem('auth_token'), account_name: null, token_expires: null };
+        return { connected: isAuthenticated(), account_name: null, token_expires: null };
       }
     },
   });
@@ -89,7 +90,7 @@ export default function Settings() {
     try {
       const res = await api.postSystemToken(token);
       if (res.data?.session_token) {
-        localStorage.setItem('auth_token', res.data.session_token);
+        setToken(res.data.session_token);
       }
       setTokenSaved(true);
       setTimeout(() => setTokenSaved(false), 2000);
@@ -167,7 +168,7 @@ export default function Settings() {
           <input
             type="text"
             value={token}
-            onChange={(e) => setToken(e.target.value)}
+            onChange={(e) => setTokenInput(e.target.value)}
             placeholder="Enter system user token..."
             className="flex-1 font-mono text-xs"
           />
@@ -318,7 +319,7 @@ export default function Settings() {
               localStorage.setItem('rocky_notifications', JSON.stringify(notifications));
               localStorage.setItem('rocky_utm_defaults', JSON.stringify(utmDefaults));
               // Also persist to API if authenticated
-              if (localStorage.getItem('auth_token')) {
+              if (isAuthenticated()) {
                 try {
                   await api.savePreferences({ utm_defaults: utmDefaults, notifications });
                 } catch { /* API unavailable, localStorage is the fallback */ }

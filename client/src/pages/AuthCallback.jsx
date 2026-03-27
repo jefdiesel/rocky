@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { setToken } from '../services/auth.js';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 
 export default function AuthCallback() {
@@ -10,7 +11,7 @@ export default function AuthCallback() {
   useEffect(() => {
     const token = searchParams.get('token');
     if (token) {
-      localStorage.setItem('auth_token', token);
+      setToken(token);
       navigate('/', { replace: true });
     } else {
       const err = searchParams.get('error') || 'No token received from Meta OAuth';

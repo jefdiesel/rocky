@@ -1,3 +1,5 @@
+import { getToken, clearToken, isAuthenticated } from './auth.js';
+
 const BASE_URL = '/api';
 
 class ApiError extends Error {
@@ -6,10 +8,6 @@ class ApiError extends Error {
     this.status = status;
     this.data = data;
   }
-}
-
-function getToken() {
-  return localStorage.getItem('auth_token') || localStorage.getItem('meta_token');
 }
 
 function getAccountId() {
@@ -37,14 +35,11 @@ async function request(endpoint, options = {}) {
     let data;
     try { data = await response.json(); } catch { data = null; }
 
-    // On 401 with explicit session errors, clear the session token only
-    // Don't clear meta_token (system user token entered manually)
-    // Don't clear on Meta API errors (token expired, rate limit, etc.)
+    // Only clear token on definitive session-dead errors from our server
     if (response.status === 401 && token) {
       const msg = data?.error || '';
-      const isSessionError = msg.includes('Invalid session') || msg.includes('Session has expired');
-      if (isSessionError) {
-        localStorage.removeItem('auth_token');
+      if (msg.includes('Invalid session') || msg.includes('Session has expired')) {
+        clearToken();
       }
     }
 
@@ -183,6 +178,8 @@ export const api = {
     uploadVideo: (data) => request('/tiktok/creative/upload/video', { method: 'POST', body: JSON.stringify(data) }),
   },
 };
+
+export { isAuthenticated };
 
 export function isMockData(response) {
   return response?._mock === true || response?.mock === true;

@@ -6,7 +6,7 @@ import PageGuide from '../components/common/PageGuide.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 import { formatNumber, formatPercent } from '../utils/format.js';
-import api from '../services/api.js';
+import api, { isAuthenticated } from '../services/api.js';
 import { getMockPixels } from '../mocks/dashboardData.js';
 
 function HealthDot({ status }) {
@@ -48,7 +48,7 @@ export default function Pixels() {
         const res = await api.getPixels();
         return res.data || res;
       } catch (err) {
-        if (!localStorage.getItem('auth_token') && !localStorage.getItem('meta_token')) return getMockPixels().data;
+        if (!isAuthenticated()) return getMockPixels().data;
         if (err.status === 401) throw err;
         console.warn('[pixels]', err.message);
         return [];
@@ -79,11 +79,11 @@ export default function Pixels() {
     const activePixels = Object.entries(testMode).filter(([, active]) => active).map(([id]) => id);
     if (activePixels.length === 0) return;
 
-    const isAuthenticated = !!(localStorage.getItem('auth_token') || localStorage.getItem('meta_token'));
+    const authed = isAuthenticated();
 
     const interval = setInterval(() => {
       activePixels.forEach(async (pixelId) => {
-        if (isAuthenticated) {
+        if (authed) {
           try {
             const res = await api.getPixelEvents(pixelId);
             const events = res.data || res || [];
