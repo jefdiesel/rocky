@@ -1,6 +1,6 @@
 import { useState, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pause, Play, Trash2, MoreHorizontal, Edit } from 'lucide-react';
 import PageGuide from '../components/common/PageGuide.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
@@ -12,8 +12,46 @@ import { getMockCampaigns } from '../mocks/dashboardData.js';
 
 export default function Campaigns() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedRows, setSelectedRows] = useState([]);
+
+  const handleToggleStatus = async (campaign) => {
+    const newStatus = campaign.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE';
+    try {
+      await api.updateCampaign(campaign.id, { status: newStatus });
+      queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+    } catch (err) {
+      alert('Failed to update: ' + (err.message || 'Unknown error'));
+    }
+  };
+
+  const handleDelete = async (campaign) => {
+    if (!confirm(`Delete campaign "${campaign.name}"?`)) return;
+    try {
+      await api.deleteCampaign(campaign.id);
+      queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+    } catch (err) {
+      alert('Failed to delete: ' + (err.message || 'Unknown error'));
+    }
+  };
+
+  const handleBulkPause = async () => {
+    for (const id of selectedRows) {
+      try { await api.updateCampaign(id, { status: 'PAUSED' }); } catch {}
+    }
+    setSelectedRows([]);
+    queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+  };
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Delete ${selectedRows.length} campaigns?`)) return;
+    for (const id of selectedRows) {
+      try { await api.deleteCampaign(id); } catch {}
+    }
+    setSelectedRows([]);
+    queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+  };
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['campaigns'],
@@ -45,7 +83,7 @@ export default function Campaigns() {
     },
     {
       key: 'daily_budget', accessor: 'daily_budget', label: 'Budget', sortable: true,
-      format: (v) => v ? formatCurrency(v) + '/d' : '--', align: 'right',
+      format: (v) => v ? formatCurrency(v / 100) + '/d' : '--', align: 'right',
     },
     { key: 'spend', accessor: 'spend', label: 'Spend', sortable: true, format: (v) => formatCurrency(v), align: 'right' },
     { key: 'results', accessor: 'results', label: 'Results', sortable: true, format: (v) => formatNumber(v), align: 'right' },
@@ -55,16 +93,17 @@ export default function Campaigns() {
       key: 'actions', label: 'Actions', width: '80px',
       render: (_, row) => (
         <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-          <button className="rounded p-1 text-zinc-500 hover:bg-zinc-700 hover:text-zinc-300" title="Edit">
+          <button onClick={() => navigate(`/campaigns/new?edit=${row.id}`)} className="rounded p-1 text-zinc-500 hover:bg-zinc-700 hover:text-zinc-300" title="Edit">
             <Edit size={13} />
           </button>
           <button
+            onClick={() => handleToggleStatus(row)}
             className="rounded p-1 text-zinc-500 hover:bg-zinc-700 hover:text-zinc-300"
             title={row.status === 'ACTIVE' ? 'Pause' : 'Activate'}
           >
             {row.status === 'ACTIVE' ? <Pause size={13} /> : <Play size={13} />}
           </button>
-          <button className="rounded p-1 text-zinc-500 hover:bg-zinc-700 hover:text-red-400" title="Delete">
+          <button onClick={() => handleDelete(row)} className="rounded p-1 text-zinc-500 hover:bg-zinc-700 hover:text-red-400" title="Delete">
             <Trash2 size={13} />
           </button>
         </div>
@@ -166,10 +205,10 @@ export default function Campaigns() {
         {selectedRows.length > 0 && (
           <div className="flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 px-3 py-1.5">
             <span className="text-xs text-zinc-400">{selectedRows.length} selected</span>
-            <button className="flex items-center gap-1 rounded px-2 py-1 text-xs text-amber-400 hover:bg-zinc-700">
+            <button onClick={handleBulkPause} className="flex items-center gap-1 rounded px-2 py-1 text-xs text-amber-400 hover:bg-zinc-700">
               <Pause size={12} /> Pause
             </button>
-            <button className="flex items-center gap-1 rounded px-2 py-1 text-xs text-red-400 hover:bg-zinc-700">
+            <button onClick={handleBulkDelete} className="flex items-center gap-1 rounded px-2 py-1 text-xs text-red-400 hover:bg-zinc-700">
               <Trash2 size={12} /> Delete
             </button>
           </div>
