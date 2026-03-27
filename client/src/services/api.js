@@ -37,13 +37,13 @@ async function request(endpoint, options = {}) {
     let data;
     try { data = await response.json(); } catch { data = null; }
 
-    // Auto-redirect to re-auth on 401 or expired Meta token
-    if (response.status === 401 && token) {
-      const isMetaExpired = data?.code === 'META_TOKEN_EXPIRED';
+    // Auto-redirect to re-auth on 401 (invalid/expired session)
+    // But skip if we're already on the auth callback to prevent loops
+    if (response.status === 401 && token && !window.location.pathname.startsWith('/auth')) {
       localStorage.removeItem('auth_token');
       localStorage.removeItem('meta_token');
-      window.location.href = '/api/auth/meta';
-      return new Promise(() => {}); // never resolves, page is redirecting
+      window.location.href = '/welcome';
+      return new Promise(() => {}); // never resolves, page is navigating
     }
 
     const message = data?.error || data?.message || getErrorMessage(response.status);

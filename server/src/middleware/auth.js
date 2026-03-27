@@ -34,9 +34,10 @@ async function verifyToken(req, res, next) {
       return res.status(401).json({ error: 'Session has expired. Please log in again.' });
     }
 
-    // Check Meta token expiry — force re-auth
+    // Check Meta token expiry — flag but don't block
+    // Blocking here causes a login loop since /auth/me also hits this middleware
     if (user.token_expiry && new Date(user.token_expiry) < new Date()) {
-      return res.status(401).json({ error: 'Meta token has expired. Please re-authenticate.', code: 'META_TOKEN_EXPIRED' });
+      req.metaTokenExpired = true;
     }
 
     // Decrypt Meta access token for API use
