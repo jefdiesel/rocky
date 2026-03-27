@@ -5,7 +5,10 @@ const mockData = require(path.join(__dirname, '..', 'mocks', 'redtrack.json'));
  * If REDTRACK_API_KEY is not set, intercept /api/redtrack/* and /api/bot/* calls.
  */
 function redtrackMockMode(req, res, next) {
-  if (process.env.REDTRACK_API_KEY) return next();
+  // Always pass through — RedTrack key comes from DB (bot_config), not env vars
+  // Mock data only for bot/telegram endpoints when no token is set
+  const routePath = req.baseUrl + req.path;
+  if (routePath.startsWith('/api/redtrack')) return next();
 
   const routePath = req.baseUrl + req.path;
 

@@ -7,9 +7,20 @@ const router = Router();
 
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
 
+// ── Get API key from bot_config table (user-entered in dashboard) ─────────────
+async function getRedTrackKey() {
+  if (!supabase) return null;
+  const { data } = await supabase.from('bot_config').select('redtrack_api_key').limit(1).single();
+  if (data?.redtrack_api_key) {
+    const { decrypt } = require('../services/crypto');
+    return decrypt(data.redtrack_api_key);
+  }
+  return null;
+}
+
 // ── Shared sync logic ────────────────────────────────────────────────────────
 async function syncFromRedTrack() {
-  const apiKey = process.env.REDTRACK_API_KEY;
+  const apiKey = await getRedTrackKey();
   if (!apiKey || !supabase) return [];
 
   const rt = new RedTrackAPI(apiKey);
@@ -50,8 +61,9 @@ router.get('/campaigns', verifyToken, async (req, res) => {
 
     const isStale = !latest || (Date.now() - new Date(latest.synced_at).getTime()) > CACHE_TTL;
 
-    // Auto-sync if stale and API key is set
-    if (isStale && process.env.REDTRACK_API_KEY) {
+    // Auto-sync if stale and API key exists
+    const hasKey = !!(await getRedTrackKey());
+    if (isStale && hasKey) {
       const fresh = await syncFromRedTrack();
       if (fresh.length > 0) {
         return res.json({ data: fresh, synced_at: new Date().toISOString() });

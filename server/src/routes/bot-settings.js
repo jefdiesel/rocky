@@ -21,12 +21,11 @@ router.get('/config', verifyToken, async (req, res) => {
     }
 
     const config = data || { telegram_token: null, telegram_chat_id: null, redtrack_api_key: null, roi_threshold: 25 };
-    // Don't send raw encrypted tokens — just indicate if they're set
     return res.json({
       data: {
         telegram_token_set: !!config.telegram_token,
-        telegram_chat_id: config.telegram_chat_id || process.env.TELEGRAM_CHAT_ID || '',
-        redtrack_api_key_set: !!config.redtrack_api_key || !!process.env.REDTRACK_API_KEY,
+        telegram_chat_id: config.telegram_chat_id || '',
+        redtrack_api_key_set: !!config.redtrack_api_key,
         roi_threshold: config.roi_threshold || 25,
       },
     });
