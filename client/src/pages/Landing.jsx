@@ -21,6 +21,7 @@ export default function Landing() {
     } catch {
       // Still show success
     }
+    if (window.fbq) window.fbq('track', 'Lead', { content_name: 'waitlist_signup' });
     setSubmitted(true);
     setSubmitting(false);
   };
