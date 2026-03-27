@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { RefreshCw, Save, Trash2, ExternalLink, Check, AlertCircle } from 'lucide-react';
+import { RefreshCw, Save, Trash2, ExternalLink, Check, AlertCircle, Bot, Link2, Send, Radio } from 'lucide-react';
 import clsx from 'clsx';
 import PageGuide from '../components/common/PageGuide.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 import api, { isAuthenticated } from '../services/api.js';
 import { setToken, getStoredSystemToken } from '../services/auth.js';
+import { useBotConfig, useTelegramStatus } from '../hooks/useRedtrack.js';
 
 const DEFAULT_UTM = {
   source: 'facebook',
@@ -30,6 +31,164 @@ function loadPref(key, fallback) {
   } catch {
     return fallback;
   }
+}
+
+function RedTrackSection({ queryClient }) {
+  const { data: config } = useBotConfig();
+  const [redtrackKey, setRedtrackKey] = useState('');
+  const [roiThreshold, setRoiThreshold] = useState(25);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const data = { roi_threshold: roiThreshold };
+      if (redtrackKey) data.redtrack_api_key = redtrackKey;
+      await api.saveBotConfig(data);
+      setSaved(true);
+      setRedtrackKey('');
+      setTimeout(() => setSaved(false), 2000);
+      queryClient.invalidateQueries({ queryKey: ['bot-config'] });
+    } catch (err) {
+      alert('Failed to save: ' + (err.message || 'Unknown error'));
+    }
+    setSaving(false);
+  };
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      await api.syncRedtrack();
+      queryClient.invalidateQueries({ queryKey: ['redtrack-campaigns'] });
+    } catch (err) {
+      alert('Sync failed: ' + (err.message || 'Unknown error'));
+    }
+    setSyncing(false);
+  };
+
+  return (
+    <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-5">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/15">
+          <Link2 size={20} className="text-purple-400" />
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold text-zinc-200">RedTrack</h3>
+          <p className="text-2xs text-zinc-500">Revenue tracking and ROI attribution</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-2xs text-zinc-500">API Key</label>
+          <input type="text" value={redtrackKey} onChange={(e) => setRedtrackKey(e.target.value)}
+            placeholder={config?.redtrack_api_key_set ? '••••••••••• (saved)' : 'Paste RedTrack API key'}
+            className="w-full font-mono text-xs" />
+        </div>
+        <div>
+          <label className="mb-1 block text-2xs text-zinc-500">ROI Alert Threshold (%)</label>
+          <input type="number" value={roiThreshold} onChange={(e) => setRoiThreshold(Number(e.target.value))}
+            className="w-full" min="0" max="100" />
+        </div>
+      </div>
+      <div className="mt-3 flex gap-2">
+        <button onClick={handleSave} disabled={saving}
+          className={clsx('flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+            saved ? 'bg-emerald-600 text-white' : 'bg-primary-600 text-white hover:bg-primary-700')}>
+          {saved ? <><Check size={13} /> Saved</> : <><Save size={13} /> Save Key</>}
+        </button>
+        <button onClick={handleSync} disabled={syncing}
+          className="flex items-center gap-1.5 rounded-md bg-zinc-700 px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-600">
+          <RefreshCw size={13} className={syncing ? 'animate-spin' : ''} /> {syncing ? 'Syncing...' : 'Force Sync'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function TelegramSection({ queryClient }) {
+  const { data: config } = useBotConfig();
+  const { data: tgStatus } = useTelegramStatus();
+  const [telegramToken, setTelegramToken] = useState('');
+  const [chatId, setChatId] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [testSent, setTestSent] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const data = {};
+      if (telegramToken) data.telegram_token = telegramToken;
+      if (chatId) data.telegram_chat_id = chatId;
+      await api.saveBotConfig(data);
+      setSaved(true);
+      setTelegramToken('');
+      setTimeout(() => setSaved(false), 2000);
+      queryClient.invalidateQueries({ queryKey: ['bot-config'] });
+    } catch (err) {
+      alert('Failed to save: ' + (err.message || 'Unknown error'));
+    }
+    setSaving(false);
+  };
+
+  const handleTest = async () => {
+    try {
+      await api.testTelegram();
+      setTestSent(true);
+      setTimeout(() => setTestSent(false), 3000);
+    } catch (err) {
+      alert('Test failed: ' + (err.message || 'Unknown error'));
+    }
+  };
+
+  return (
+    <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-5">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/15">
+          <Bot size={20} className="text-blue-400" />
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold text-zinc-200">Telegram Bot</h3>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className={clsx(
+              'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-medium',
+              tgStatus?.connected ? 'bg-emerald-500/15 text-emerald-400' : 'bg-zinc-500/15 text-zinc-400'
+            )}>
+              <Radio size={8} /> {tgStatus?.connected ? 'Connected' : 'Not connected'}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-2xs text-zinc-500">Bot Token</label>
+          <input type="text" value={telegramToken} onChange={(e) => setTelegramToken(e.target.value)}
+            placeholder={config?.telegram_token_set ? '••••••••••• (saved)' : 'Paste bot token from @BotFather'}
+            className="w-full font-mono text-xs" />
+        </div>
+        <div>
+          <label className="mb-1 block text-2xs text-zinc-500">Chat ID</label>
+          <input type="text" value={chatId} onChange={(e) => setChatId(e.target.value)}
+            placeholder={config?.telegram_chat_id || 'Your Telegram chat ID'}
+            className="w-full font-mono text-xs" />
+        </div>
+      </div>
+      <div className="mt-3 flex gap-2">
+        <button onClick={handleSave} disabled={saving}
+          className={clsx('flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+            saved ? 'bg-emerald-600 text-white' : 'bg-primary-600 text-white hover:bg-primary-700')}>
+          {saved ? <><Check size={13} /> Saved</> : <><Save size={13} /> Save</>}
+        </button>
+        <button onClick={handleTest}
+          className={clsx('flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+            testSent ? 'bg-emerald-600 text-white' : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600')}>
+          {testSent ? <><Check size={13} /> Sent</> : <><Send size={13} /> Test Alert</>}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default function Settings() {
@@ -215,6 +374,12 @@ export default function Settings() {
           </a>
         </div>
       </div>
+
+      {/* RedTrack Integration */}
+      <RedTrackSection queryClient={queryClient} />
+
+      {/* Telegram Bot */}
+      <TelegramSection queryClient={queryClient} />
 
       {/* Default UTM Settings */}
       <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-5">

@@ -14,9 +14,9 @@ router.get('/config', verifyToken, async (req, res) => {
       .from('bot_config')
       .select('*')
       .eq('user_id', req.user.id)
-      .single();
+      .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error) {
       return res.status(500).json({ error: error.message });
     }
 

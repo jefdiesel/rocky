@@ -12,7 +12,6 @@ import {
   Zap,
   X,
   Sparkles,
-  Bot,
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -23,7 +22,6 @@ const META_NAV = [
   { to: '/creative', icon: Palette, label: 'Creative' },
   { to: '/studio', icon: Sparkles, label: 'Creative Studio' },
   { to: '/pixels', icon: Activity, label: 'Pixels' },
-  { to: '/bot', icon: Bot, label: 'Bot Settings' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
@@ -34,7 +32,6 @@ const TIKTOK_NAV = [
   { to: '/tiktok/creative', icon: Palette, label: 'Creative' },
   { to: '/studio', icon: Sparkles, label: 'Creative Studio' },
   { to: '/tiktok/pixels', icon: Activity, label: 'Pixels' },
-  { to: '/bot', icon: Bot, label: 'Bot Settings' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 

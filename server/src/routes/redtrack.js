@@ -10,10 +10,14 @@ const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
 // ── Get API key from bot_config table (user-entered in dashboard) ─────────────
 async function getRedTrackKey() {
   if (!supabase) return null;
-  const { data } = await supabase.from('bot_config').select('redtrack_api_key').limit(1).single();
-  if (data?.redtrack_api_key) {
-    const { decrypt } = require('../services/crypto');
-    return decrypt(data.redtrack_api_key);
+  try {
+    const { data } = await supabase.from('bot_config').select('redtrack_api_key').limit(1).maybeSingle();
+    if (data?.redtrack_api_key) {
+      const { decrypt } = require('../services/crypto');
+      return decrypt(data.redtrack_api_key);
+    }
+  } catch (err) {
+    console.error('[redtrack] Failed to read API key:', err.message);
   }
   return null;
 }
