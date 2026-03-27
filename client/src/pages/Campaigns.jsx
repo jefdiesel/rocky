@@ -60,7 +60,7 @@ export default function Campaigns() {
         const res = await api.getCampaigns();
         return res.data || [];
       } catch (err) {
-        if (!localStorage.getItem('auth_token')) return getMockCampaigns().data;
+        if (!localStorage.getItem('auth_token') && !localStorage.getItem('meta_token')) return getMockCampaigns().data;
         if (err.status === 401) throw err;
         console.warn('[campaigns]', err.message);
         return [];

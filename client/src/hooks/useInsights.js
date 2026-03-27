@@ -11,7 +11,7 @@ import {
   getMockPacingData,
 } from '../mocks/dashboardData.js';
 
-const hasAuth = () => !!localStorage.getItem('auth_token');
+const hasAuth = () => !!(localStorage.getItem('auth_token') || localStorage.getItem('meta_token'));
 
 function safeFetch(fn, mockFn) {
   return async () => {

@@ -22,7 +22,7 @@ export function useAccounts() {
         const res = await api.getAccounts();
         return res.data || res;
       } catch (err) {
-        if (localStorage.getItem('auth_token')) throw err;
+        if (localStorage.getItem('auth_token') || localStorage.getItem('meta_token')) throw err;
         const mock = getMockAccounts();
         return mock.data;
       }

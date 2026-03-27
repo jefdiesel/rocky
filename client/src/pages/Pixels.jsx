@@ -48,7 +48,7 @@ export default function Pixels() {
         const res = await api.getPixels();
         return res.data || res;
       } catch (err) {
-        if (!localStorage.getItem('auth_token')) return getMockPixels().data;
+        if (!localStorage.getItem('auth_token') && !localStorage.getItem('meta_token')) return getMockPixels().data;
         if (err.status === 401) throw err;
         console.warn('[pixels]', err.message);
         return [];
@@ -79,7 +79,7 @@ export default function Pixels() {
     const activePixels = Object.entries(testMode).filter(([, active]) => active).map(([id]) => id);
     if (activePixels.length === 0) return;
 
-    const isAuthenticated = !!localStorage.getItem('auth_token');
+    const isAuthenticated = !!(localStorage.getItem('auth_token') || localStorage.getItem('meta_token'));
 
     const interval = setInterval(() => {
       activePixels.forEach(async (pixelId) => {

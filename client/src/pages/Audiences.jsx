@@ -43,7 +43,7 @@ export default function Audiences() {
         const res = await api.getAudiences();
         return res.data || [];
       } catch (err) {
-        if (!localStorage.getItem('auth_token')) return getMockAudiences().data;
+        if (!localStorage.getItem('auth_token') && !localStorage.getItem('meta_token')) return getMockAudiences().data;
         if (err.status === 401) throw err;
         console.warn('[audiences]', err.message);
         return [];
