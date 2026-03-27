@@ -4,7 +4,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, BarChart, Bar,
 } from 'recharts';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RefreshCw, ChevronDown } from 'lucide-react';
 import clsx from 'clsx';
 import PageGuide from '../components/common/PageGuide.jsx';
 import KPICard from '../components/common/KPICard.jsx';
@@ -34,6 +34,7 @@ export default function Dashboard() {
 
   const [breakdownLevel, setBreakdownLevel] = useState('campaign');
   const [rtSyncing, setRtSyncing] = useState(false);
+  const [metaCollapsed, setMetaCollapsed] = useState(false);
 
   // Aggregate RedTrack totals
   const rtData = rtCampaigns || [];
@@ -128,20 +129,31 @@ export default function Dashboard() {
       />
       {/* KPI Panels — Meta + RedTrack side by side */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {/* Meta Ads Panel */}
+        {/* Meta Ads Panel — collapsible */}
         <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="flex h-6 w-6 items-center justify-center rounded bg-blue-500/20">
-              <span className="text-xs font-bold text-blue-400">f</span>
+          <button onClick={() => setMetaCollapsed(!metaCollapsed)}
+            className="flex w-full items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex h-6 w-6 items-center justify-center rounded bg-blue-500/20">
+                <span className="text-xs font-bold text-blue-400">f</span>
+              </div>
+              <h3 className="text-xs font-semibold text-zinc-300">Meta Ads</h3>
+              {metaCollapsed && kpis && (
+                <span className="text-xs text-zinc-500 ml-2">
+                  {formatCurrency(kpis.spend)} spent · {formatPercent(kpis.ctr)} CTR · {formatCurrency(kpis.cpc)} CPC
+                </span>
+              )}
             </div>
-            <h3 className="text-xs font-semibold text-zinc-300">Meta Ads</h3>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {kpisLoading
-              ? Array.from({ length: 9 }).map((_, i) => <KPICard key={i} loading />)
-              : metaKpis.map((kpi, i) => <KPICard key={i} {...kpi} />)
-            }
-          </div>
+            <ChevronDown size={14} className={clsx('text-zinc-500 transition-transform', metaCollapsed && '-rotate-90')} />
+          </button>
+          {!metaCollapsed && (
+            <div className="grid grid-cols-3 gap-2 mt-3">
+              {kpisLoading
+                ? Array.from({ length: 9 }).map((_, i) => <KPICard key={i} loading />)
+                : metaKpis.map((kpi, i) => <KPICard key={i} {...kpi} />)
+              }
+            </div>
+          )}
         </div>
 
         {/* RedTrack Panel */}
