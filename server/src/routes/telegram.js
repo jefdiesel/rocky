@@ -100,10 +100,12 @@ async function handlePause(bot, campaignId, queryId, messageId) {
 
     if (result.success) {
       await bot.answerCallbackQuery(queryId, 'Campaign paused!');
-      if (messageId) await bot.editMessageText(messageId, `⏸ <b>PAUSED</b> — Campaign ${campaignId} has been paused.`);
+      await bot.sendMessage(`⏸ <b>PAUSED</b> — Campaign ${campaignId} has been paused via Remi.`);
       await logAlert(campaignId, null, null, null, 'paused');
     } else {
-      await bot.answerCallbackQuery(queryId, 'Failed to pause: ' + (result.error?.message || 'Unknown error'));
+      const errMsg = result.error?.message || 'Unknown error';
+      await bot.answerCallbackQuery(queryId, 'Failed: ' + errMsg);
+      await bot.sendMessage(`❌ Failed to pause campaign: ${errMsg}`);
     }
   } catch (err) {
     console.error('[telegram] Pause error:', err.message);
@@ -123,7 +125,7 @@ async function handleSnooze(bot, campaignId, queryId, messageId) {
     }
 
     await bot.answerCallbackQuery(queryId, 'Snoozed for 1 hour.');
-    if (messageId) await bot.editMessageText(messageId, `😴 <b>SNOOZED</b> — Alerts for ${campaignId} suppressed until ${snoozedUntil.toLocaleTimeString()}.`);
+    await bot.sendMessage(`😴 <b>SNOOZED</b> — Alerts for ${campaignId} suppressed for 1 hour.`);
     await logAlert(campaignId, null, null, null, 'snoozed');
   } catch (err) {
     console.error('[telegram] Snooze error:', err.message);
@@ -133,7 +135,7 @@ async function handleSnooze(bot, campaignId, queryId, messageId) {
 
 async function handleIgnore(bot, campaignId, queryId, messageId) {
   await bot.answerCallbackQuery(queryId, 'Alert dismissed.');
-  if (messageId) await bot.editMessageText(messageId, `✖ <b>IGNORED</b> — Alert for ${campaignId} dismissed.`);
+  await bot.sendMessage(`✖ <b>IGNORED</b> — Alert for ${campaignId} dismissed.`);
   await logAlert(campaignId, null, null, null, 'ignored');
 }
 
