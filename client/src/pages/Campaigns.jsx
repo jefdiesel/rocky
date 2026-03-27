@@ -82,7 +82,15 @@ export default function Campaigns() {
       format: (v) => v?.replace('OUTCOME_', '').replace(/_/g, ' '),
     },
     {
-      key: 'daily_budget', accessor: 'daily_budget', label: 'Budget', sortable: true,
+      key: 'daily_budget', label: 'Budget', sortable: true,
+      accessor: (row) => {
+        if (row.daily_budget && row.daily_budget !== '0') return row.daily_budget;
+        if (row.lifetime_budget && row.lifetime_budget !== '0') return row.lifetime_budget;
+        const adset = row.adsets?.[0];
+        if (adset?.daily_budget && adset.daily_budget !== '0') return adset.daily_budget;
+        if (adset?.lifetime_budget && adset.lifetime_budget !== '0') return adset.lifetime_budget;
+        return null;
+      },
       format: (v) => v ? formatCurrency(v / 100) + '/d' : '--', align: 'right',
     },
     { key: 'spend', accessor: 'spend', label: 'Spend', sortable: true, format: (v) => formatCurrency(v), align: 'right' },
