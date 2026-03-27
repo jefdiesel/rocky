@@ -120,7 +120,7 @@ export default function CampaignBuilder() {
   const canProceed = () => {
     if (step === 0) return state.name && state.objective;
     if (step === 1) return state.budgetAmount > 0;
-    if (step === 2) return state.primaryText && state.headline;
+    if (step === 2) return true; // ad creative is optional
     return true;
   };
 
