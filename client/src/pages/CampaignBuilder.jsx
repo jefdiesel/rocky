@@ -187,9 +187,83 @@ export default function CampaignBuilder() {
       };
 
       if (draft) {
-        await api.saveDraft(payload);
+        const accountId = localStorage.getItem('selected_account_id');
+        await api.saveDraft({ account_id: accountId, name: state.name, config: payload });
       } else {
-        await api.createCampaign(payload);
+        const accountId = localStorage.getItem('selected_account_id');
+        const budgetCents = Math.round((parseFloat(state.budgetAmount) || 10) * 100);
+
+        // Step 1: Create campaign
+        const campRes = await api.createCampaign({
+          account_id: accountId,
+          name: state.name,
+          objective: state.objective || 'OUTCOME_TRAFFIC',
+          status: 'PAUSED',
+          special_ad_categories: state.specialAdCategories.length ? state.specialAdCategories : [],
+        });
+        const campaignId = campRes.data?.id;
+        if (!campaignId) throw new Error('Failed to create campaign');
+
+        // Step 2: Create ad set
+        const targeting = {
+          age_min: state.ageMin || 18,
+          age_max: state.ageMax || 65,
+          geo_locations: {
+            countries: state.locations?.length ? state.locations : ['US'],
+          },
+        };
+        if (state.gender && state.gender !== 'ALL') {
+          targeting.genders = [state.gender === 'MALE' ? 1 : 2];
+        }
+
+        const adsetPayload = {
+          account_id: accountId,
+          campaign_id: campaignId,
+          name: state.name + ' - Ad Set',
+          targeting: JSON.stringify(targeting),
+          billing_event: 'IMPRESSIONS',
+          optimization_goal: state.optimizationGoal || 'LINK_CLICKS',
+          status: 'PAUSED',
+        };
+        if (state.budgetType === 'DAILY') {
+          adsetPayload.daily_budget = budgetCents;
+        } else {
+          adsetPayload.lifetime_budget = budgetCents;
+          if (state.endDate) adsetPayload.end_time = new Date(state.endDate).toISOString();
+        }
+        if (state.startDate) adsetPayload.start_time = new Date(state.startDate).toISOString();
+        if (state.endDate) adsetPayload.end_time = new Date(state.endDate).toISOString();
+        if (state.bidCap) adsetPayload.bid_amount = Math.round(parseFloat(state.bidCap) * 100);
+
+        const adsetRes = await api.createAdSet(adsetPayload);
+        const adsetId = adsetRes.data?.id;
+        if (!adsetId) throw new Error('Failed to create ad set');
+
+        // Step 3: Create ad (if creative info provided)
+        if (state.headline || state.primaryText || state.destinationUrl) {
+          const utmUrl = buildUTMUrl(state.destinationUrl || 'https://example.com', {
+            utm_source: state.utmSource, utm_medium: state.utmMedium,
+            utm_campaign: state.utmCampaign, utm_content: state.utmContent,
+          });
+
+          await api.createAd({
+            account_id: accountId,
+            adset_id: adsetId,
+            name: state.name + ' - Ad',
+            status: 'PAUSED',
+            creative: JSON.stringify({
+              object_story_spec: {
+                link_data: {
+                  link: utmUrl || state.destinationUrl,
+                  message: state.primaryText || '',
+                  name: state.headline || '',
+                  description: state.description || '',
+                  call_to_action: { type: state.cta || 'LEARN_MORE' },
+                },
+              },
+            }),
+          });
+        }
       }
       navigate('/campaigns');
     } catch (err) {

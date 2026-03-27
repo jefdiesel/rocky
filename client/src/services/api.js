@@ -36,6 +36,15 @@ async function request(endpoint, options = {}) {
   if (!response.ok) {
     let data;
     try { data = await response.json(); } catch { data = null; }
+
+    // Auto-redirect to re-auth on 401
+    if (response.status === 401 && token) {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('meta_token');
+      window.location.href = '/api/auth/meta';
+      return new Promise(() => {}); // never resolves, page is redirecting
+    }
+
     const message = data?.error || data?.message || getErrorMessage(response.status);
     throw new ApiError(message, response.status, data);
   }
