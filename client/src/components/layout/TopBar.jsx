@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import DateRangePicker from '../common/DateRangePicker.jsx';
 import api from '../../services/api.js';
 
-export default function TopBar({ accounts, selectedAccount, onSelectAccount, dateRange, onMenuToggle }) {
+export default function TopBar({ accounts, selectedAccount, onSelectAccount, dateRange, onMenuToggle, platform, onTogglePlatform }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [accountOpen, setAccountOpen] = useState(false);
@@ -55,9 +55,11 @@ export default function TopBar({ accounts, selectedAccount, onSelectAccount, dat
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
+  const isTikTok = platform === 'tiktok';
+
   return (
     <header className="flex h-12 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-2 md:px-4">
-      {/* Left: Hamburger + Account Switcher */}
+      {/* Left: Hamburger + Platform Toggle + Account Switcher */}
       <div className="flex items-center gap-1 min-w-0">
         <button
           onClick={onMenuToggle}
@@ -65,37 +67,59 @@ export default function TopBar({ accounts, selectedAccount, onSelectAccount, dat
         >
           <Menu size={18} />
         </button>
+
+        {/* Platform toggle */}
+        <button
+          onClick={onTogglePlatform}
+          className={clsx(
+            'flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors flex-shrink-0',
+            isTikTok
+              ? 'bg-pink-500/15 text-pink-400 hover:bg-pink-500/25'
+              : 'bg-blue-500/15 text-blue-400 hover:bg-blue-500/25'
+          )}
+        >
+          {isTikTok ? 'TT' : 'f'}
+        </button>
+
       <div className="relative min-w-0" ref={accountRef}>
         <button
           onClick={() => setAccountOpen(!accountOpen)}
           className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 transition-colors"
         >
           <div className="flex h-5 w-5 items-center justify-center rounded bg-primary-600 text-2xs font-bold text-white">
-            {selectedAccount?.name?.charAt(0) || 'R'}
+            {(selectedAccount?.name || selectedAccount?.advertiser_name || 'R').charAt(0)}
           </div>
-          <span className="max-w-[100px] md:max-w-[200px] truncate font-medium">{selectedAccount?.name || 'Select account'}</span>
+          <span className="max-w-[100px] md:max-w-[200px] truncate font-medium">
+            {selectedAccount?.name || selectedAccount?.advertiser_name || 'Select account'}
+          </span>
           <ChevronDown size={13} className={clsx('text-zinc-500 transition-transform', accountOpen && 'rotate-180')} />
         </button>
         {accountOpen && (
           <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-lg border border-zinc-700 bg-zinc-800 py-1 shadow-xl">
-            {accounts.map((acc) => (
-              <button
-                key={acc.account_id || acc.id}
-                onClick={() => { onSelectAccount(acc.account_id || acc.id); setAccountOpen(false); }}
-                className={clsx(
-                  'flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors',
-                  acc.account_id || acc.id === selectedAccount?.id ? 'bg-primary-600/15 text-primary-400' : 'text-zinc-300 hover:bg-zinc-700'
-                )}
-              >
-                <div className="flex h-5 w-5 items-center justify-center rounded bg-zinc-700 text-2xs font-bold text-zinc-300">
-                  {acc.name.charAt(0)}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{acc.name}</p>
-                  <p className="text-2xs text-zinc-500">{acc.account_id || acc.id} &middot; {acc.currency}</p>
-                </div>
-              </button>
-            ))}
+            {accounts.map((acc) => {
+              const accId = acc.account_id || acc.advertiser_id || acc.id;
+              const accName = acc.name || acc.advertiser_name;
+              return (
+                <button
+                  key={accId}
+                  onClick={() => { onSelectAccount(accId); setAccountOpen(false); }}
+                  className={clsx(
+                    'flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors',
+                    accId === (selectedAccount?.id || selectedAccount?.account_id || selectedAccount?.advertiser_id)
+                      ? 'bg-primary-600/15 text-primary-400'
+                      : 'text-zinc-300 hover:bg-zinc-700'
+                  )}
+                >
+                  <div className="flex h-5 w-5 items-center justify-center rounded bg-zinc-700 text-2xs font-bold text-zinc-300">
+                    {accName?.charAt(0) || '?'}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{accName}</p>
+                    <p className="text-2xs text-zinc-500">{accId} &middot; {acc.currency || 'USD'}</p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>

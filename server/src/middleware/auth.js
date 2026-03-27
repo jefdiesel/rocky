@@ -21,7 +21,7 @@ async function verifyToken(req, res, next) {
   try {
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at, preferences')
+      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at, preferences, tiktok_access_token, tiktok_user_id')
       .eq('session_token', token)
       .single();
 
@@ -34,14 +34,15 @@ async function verifyToken(req, res, next) {
       return res.status(401).json({ error: 'Session has expired. Please log in again.' });
     }
 
-    // Check Meta token expiry — warn but don't block
+    // Check Meta token expiry — force re-auth
     if (user.token_expiry && new Date(user.token_expiry) < new Date()) {
-      req.metaTokenExpired = true;
+      return res.status(401).json({ error: 'Meta token has expired. Please re-authenticate.', code: 'META_TOKEN_EXPIRED' });
     }
 
     // Decrypt Meta access token for API use
-    user.access_token = decrypt(user.access_token);
+    if (user.access_token) user.access_token = decrypt(user.access_token);
     if (user.system_token) user.system_token = decrypt(user.system_token);
+    if (user.tiktok_access_token) user.tiktok_access_token = decrypt(user.tiktok_access_token);
 
     req.user = user;
     next();
@@ -68,7 +69,7 @@ async function optionalAuth(req, res, next) {
   try {
     const { data: user } = await supabase
       .from('users')
-      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at, preferences')
+      .select('id, meta_user_id, name, email, access_token, token_expiry, system_token, session_expiry, created_at, preferences, tiktok_access_token, tiktok_user_id')
       .eq('session_token', token)
       .single();
 

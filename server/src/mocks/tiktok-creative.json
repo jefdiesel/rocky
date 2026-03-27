@@ -1,0 +1,55 @@
+[
+  {
+    "material_id": "tt_asset_001",
+    "material_name": "UGC Review - Summer Collection",
+    "material_type": "VIDEO",
+    "width": 1080,
+    "height": 1920,
+    "duration": 15,
+    "file_size": 4500000,
+    "url": "https://placehold.co/1080x1920",
+    "create_time": "2026-02-15T10:00:00Z"
+  },
+  {
+    "material_id": "tt_asset_002",
+    "material_name": "Product Showcase - Hero",
+    "material_type": "IMAGE",
+    "width": 1080,
+    "height": 1920,
+    "file_size": 850000,
+    "url": "https://placehold.co/1080x1920",
+    "create_time": "2026-02-20T14:00:00Z"
+  },
+  {
+    "material_id": "tt_asset_003",
+    "material_name": "App Demo - Feature Walkthrough",
+    "material_type": "VIDEO",
+    "width": 1080,
+    "height": 1920,
+    "duration": 30,
+    "file_size": 8200000,
+    "url": "https://placehold.co/1080x1920",
+    "create_time": "2026-03-01T08:00:00Z"
+  },
+  {
+    "material_id": "tt_asset_004",
+    "material_name": "Spark Ad - Creator Collab",
+    "material_type": "VIDEO",
+    "width": 1080,
+    "height": 1920,
+    "duration": 22,
+    "file_size": 6100000,
+    "url": "https://placehold.co/1080x1920",
+    "create_time": "2026-03-10T12:00:00Z"
+  },
+  {
+    "material_id": "tt_asset_005",
+    "material_name": "Carousel Card 1",
+    "material_type": "IMAGE",
+    "width": 1080,
+    "height": 1080,
+    "file_size": 620000,
+    "url": "https://placehold.co/1080x1080",
+    "create_time": "2026-03-15T09:00:00Z"
+  }
+]

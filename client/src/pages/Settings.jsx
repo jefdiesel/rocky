@@ -191,6 +191,30 @@ export default function Settings() {
         </div>
       </div>
 
+      {/* Connected TikTok Account */}
+      <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-5">
+        <h3 className="mb-4 text-sm font-semibold text-zinc-200">Connect TikTok for Business</h3>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-pink-500/15">
+                <span className="text-lg font-bold text-pink-400">T</span>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-zinc-200">TikTok Ads</p>
+                <p className="text-2xs text-zinc-500">Connect to manage TikTok campaigns alongside Meta</p>
+              </div>
+            </div>
+          </div>
+          <a
+            href="/api/auth/tiktok"
+            className="flex items-center gap-1.5 rounded-md bg-pink-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-pink-400 transition-colors shadow-lg shadow-pink-500/25"
+          >
+            <RefreshCw size={14} /> Connect TikTok
+          </a>
+        </div>
+      </div>
+
       {/* Default UTM Settings */}
       <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-5">
         <h3 className="mb-4 text-sm font-semibold text-zinc-200">Default UTM Parameters</h3>

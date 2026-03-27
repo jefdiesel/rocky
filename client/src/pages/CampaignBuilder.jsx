@@ -1,5 +1,5 @@
-import { useReducer, useState, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useReducer, useState, useCallback, useRef, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   ChevronRight, ChevronLeft, Check, Plus, X, Upload, Image, GalleryHorizontal,
   Video, Smartphone, LayoutGrid, Copy, Eye,
@@ -61,6 +61,8 @@ function reducer(state, action) {
   switch (action.type) {
     case 'SET_FIELD':
       return { ...state, [action.field]: action.value };
+    case 'LOAD_CAMPAIGN':
+      return { ...state, ...action.payload };
     case 'TOGGLE_SPECIAL_CATEGORY': {
       const cats = state.specialAdCategories.includes(action.value)
         ? state.specialAdCategories.filter((c) => c !== action.value)
@@ -107,21 +109,108 @@ const FORMAT_ICONS = {
   COLLECTION: LayoutGrid,
 };
 
+// --- Validation ---
+function validateStep(step, state) {
+  const errors = [];
+  if (step === 0) {
+    if (!state.name.trim()) errors.push('Campaign name is required');
+    if (!state.objective) errors.push('Campaign objective is required');
+  } else if (step === 1) {
+    if (!state.budgetAmount || parseFloat(state.budgetAmount) <= 0) errors.push('Budget must be greater than $0');
+    if (!state.startDate) errors.push('Start date is required');
+  } else if (step === 2) {
+    if (state.primaryText || state.headline || state.destinationUrl) {
+      if (state.destinationUrl && !/^https?:\/\/.+\..+/.test(state.destinationUrl)) {
+        errors.push('Destination URL must be a valid URL');
+      }
+    }
+  }
+  return errors;
+}
+
 export default function CampaignBuilder() {
   const navigate = useNavigate();
+  const { campaignId } = useParams();
+  const isEditMode = !!campaignId;
   const [state, dispatch] = useReducer(reducer, initialState);
   const [step, setStep] = useState(0);
   const [locationInput, setLocationInput] = useState('');
   const [interestInput, setInterestInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [validationErrors, setValidationErrors] = useState([]);
+  const [loading, setLoading] = useState(isEditMode);
+
+  // Edit mode: load existing campaign data
+  useEffect(() => {
+    if (!campaignId) return;
+    (async () => {
+      try {
+        const accountId = localStorage.getItem('selected_account_id');
+        const res = await api.getCampaigns({ account_id: accountId });
+        const campaigns = res.data || [];
+        const campaign = campaigns.find((c) => c.id === campaignId);
+        if (!campaign) {
+          alert('Campaign not found');
+          navigate('/campaigns');
+          return;
+        }
+        const adset = campaign.adsets?.[0];
+        const ad = adset?.ads?.[0];
+        const targeting = adset?.targeting || {};
+
+        const payload = {
+          name: campaign.name || '',
+          objective: campaign.objective || '',
+          budgetType: adset?.daily_budget && adset.daily_budget !== '0' ? 'DAILY' : 'LIFETIME',
+          budgetAmount: adset?.daily_budget && adset.daily_budget !== '0'
+            ? String(parseInt(adset.daily_budget) / 100)
+            : adset?.lifetime_budget ? String(parseInt(adset.lifetime_budget) / 100) : '',
+          startDate: campaign.start_time ? campaign.start_time.split('T')[0] : '',
+          endDate: campaign.stop_time ? campaign.stop_time.split('T')[0] : '',
+          optimizationGoal: adset?.optimization_goal || 'LINK_CLICKS',
+          ageMin: targeting.age_min || 18,
+          ageMax: targeting.age_max || 65,
+          locations: targeting.geo_locations?.countries || [],
+        };
+
+        if (ad?.creative) {
+          try {
+            const creative = typeof ad.creative === 'string' ? JSON.parse(ad.creative) : ad.creative;
+            const linkData = creative?.object_story_spec?.link_data;
+            if (linkData) {
+              payload.primaryText = linkData.message || '';
+              payload.headline = linkData.name || '';
+              payload.description = linkData.description || '';
+              payload.destinationUrl = linkData.link || '';
+            }
+          } catch {}
+        }
+
+        dispatch({ type: 'LOAD_CAMPAIGN', payload });
+      } catch (err) {
+        alert('Failed to load campaign: ' + (err.message || 'Unknown error'));
+        navigate('/campaigns');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [campaignId, navigate]);
 
   const set = useCallback((field, value) => dispatch({ type: 'SET_FIELD', field, value }), []);
 
   const canProceed = () => {
-    if (step === 0) return state.name && state.objective;
-    if (step === 1) return state.budgetAmount > 0;
-    if (step === 2) return true; // ad creative is optional
-    return true;
+    const errors = validateStep(step, state);
+    return errors.length === 0;
+  };
+
+  const handleNext = () => {
+    const errors = validateStep(step, state);
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+    setValidationErrors([]);
+    setStep(step + 1);
   };
 
   const fileInputRef = useRef(null);
@@ -189,6 +278,54 @@ export default function CampaignBuilder() {
       if (draft) {
         const accountId = localStorage.getItem('selected_account_id');
         await api.saveDraft({ account_id: accountId, name: state.name, config: payload });
+      } else if (isEditMode) {
+        // Edit mode: update existing campaign, adset, ad
+        const accountId = localStorage.getItem('selected_account_id');
+        const budgetCents = Math.round((parseFloat(state.budgetAmount) || 10) * 100);
+
+        await api.updateCampaign(campaignId, {
+          name: state.name,
+          status: 'PAUSED',
+        });
+
+        // Fetch campaign to get adset/ad IDs for update
+        const res = await api.getCampaigns({ account_id: accountId });
+        const campaign = (res.data || []).find((c) => c.id === campaignId);
+        const adset = campaign?.adsets?.[0];
+        const ad = adset?.ads?.[0];
+
+        if (adset) {
+          const adsetUpdate = {
+            name: state.name + ' - Ad Set',
+            optimization_goal: state.optimizationGoal || 'LINK_CLICKS',
+          };
+          if (state.budgetType === 'DAILY') adsetUpdate.daily_budget = budgetCents;
+          else adsetUpdate.lifetime_budget = budgetCents;
+          if (state.startDate) adsetUpdate.start_time = new Date(state.startDate).toISOString();
+          if (state.endDate) adsetUpdate.end_time = new Date(state.endDate).toISOString();
+          await api.updateAdSet(adset.id, adsetUpdate);
+        }
+
+        if (ad && (state.headline || state.primaryText || state.destinationUrl)) {
+          const utmUrl = buildUTMUrl(state.destinationUrl || 'https://example.com', {
+            utm_source: state.utmSource, utm_medium: state.utmMedium,
+            utm_campaign: state.utmCampaign, utm_content: state.utmContent,
+          });
+          await api.updateAd(ad.id, {
+            name: state.name + ' - Ad',
+            creative: JSON.stringify({
+              object_story_spec: {
+                link_data: {
+                  link: utmUrl || state.destinationUrl,
+                  message: state.primaryText || '',
+                  name: state.headline || '',
+                  description: state.description || '',
+                  call_to_action: { type: state.cta || 'LEARN_MORE' },
+                },
+              },
+            }),
+          });
+        }
       } else {
         const accountId = localStorage.getItem('selected_account_id');
         const budgetCents = Math.round((parseFloat(state.budgetAmount) || 10) * 100);
@@ -201,8 +338,8 @@ export default function CampaignBuilder() {
           status: 'PAUSED',
           special_ad_categories: state.specialAdCategories.length ? state.specialAdCategories : [],
         });
-        const campaignId = campRes.data?.id;
-        if (!campaignId) throw new Error('Failed to create campaign');
+        const newCampaignId = campRes.data?.id;
+        if (!newCampaignId) throw new Error('Failed to create campaign');
 
         // Step 2: Create ad set
         const targeting = {
@@ -218,7 +355,7 @@ export default function CampaignBuilder() {
 
         const adsetPayload = {
           account_id: accountId,
-          campaign_id: campaignId,
+          campaign_id: newCampaignId,
           name: state.name + ' - Ad Set',
           targeting: JSON.stringify(targeting),
           billing_event: 'IMPRESSIONS',
@@ -267,7 +404,7 @@ export default function CampaignBuilder() {
       }
       navigate('/campaigns');
     } catch (err) {
-      alert('Failed to ' + (draft ? 'save draft' : 'submit campaign') + ': ' + (err.message || 'Unknown error'));
+      alert('Failed to ' + (draft ? 'save draft' : isEditMode ? 'update campaign' : 'submit campaign') + ': ' + (err.message || 'Unknown error'));
     } finally {
       setSubmitting(false);
     }
@@ -279,6 +416,14 @@ export default function CampaignBuilder() {
     utm_campaign: state.utmCampaign || state.name.toLowerCase().replace(/\s+/g, '_'),
     utm_content: state.utmContent,
   });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <p className="text-sm text-zinc-400">Loading campaign...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
@@ -294,7 +439,9 @@ export default function CampaignBuilder() {
       />
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-zinc-100">Create Campaign</h1>
+        <h1 className="text-lg font-semibold text-zinc-100">
+          {isEditMode ? 'Edit Campaign' : 'Create Campaign'}
+        </h1>
         <button
           onClick={() => navigate('/campaigns')}
           className="text-xs text-zinc-500 hover:text-zinc-300"
@@ -323,6 +470,15 @@ export default function CampaignBuilder() {
           </div>
         ))}
       </div>
+
+      {/* Validation Errors */}
+      {validationErrors.length > 0 && (
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3">
+          {validationErrors.map((err, i) => (
+            <p key={i} className="text-xs text-red-400">{err}</p>
+          ))}
+        </div>
+      )}
 
       {/* Step Content */}
       <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-6">
@@ -1023,7 +1179,7 @@ export default function CampaignBuilder() {
           <ChevronLeft size={14} /> {step === 0 ? 'Cancel' : 'Back'}
         </button>
         <div className="flex gap-2">
-          {step === 3 && (
+          {step === 3 && !isEditMode && (
             <button
               onClick={() => handleSubmit(true)}
               disabled={submitting}
@@ -1034,7 +1190,7 @@ export default function CampaignBuilder() {
           )}
           {step < 3 ? (
             <button
-              onClick={() => setStep(step + 1)}
+              onClick={handleNext}
               disabled={!canProceed()}
               className="flex items-center gap-1 rounded-md bg-primary-600 px-4 py-2 text-xs font-medium text-white hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -1046,7 +1202,7 @@ export default function CampaignBuilder() {
               disabled={submitting}
               className="flex items-center gap-1 rounded-md bg-primary-600 px-4 py-2 text-xs font-medium text-white hover:bg-primary-700 transition-colors disabled:opacity-50"
             >
-              {submitting ? 'Submitting...' : 'Submit to Meta'}
+              {submitting ? 'Submitting...' : isEditMode ? 'Update Campaign' : 'Submit to Meta'}
             </button>
           )}
         </div>

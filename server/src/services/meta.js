@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
 
+const API_VERSION = process.env.META_API_VERSION || 'v21.0';
+
 const ERROR_MESSAGES = {
   17: 'Meta API rate limit reached. Please wait a moment and try again.',
   32: 'Meta API rate limit reached (account level). Please try again shortly.',
@@ -11,10 +13,26 @@ const ERROR_MESSAGES = {
   200: 'Insufficient permissions. Please check your app permissions.',
 };
 
+const RETRY_DELAYS = [1000, 2000, 4000];
+const RETRYABLE_STATUSES = new Set([429, 503]);
+const MAX_PAGINATED_RECORDS = 5000;
+
 class MetaAPI {
   constructor(accessToken) {
     this.accessToken = accessToken;
-    this.BASE_URL = 'https://graph.facebook.com/v19.0';
+    this.BASE_URL = `https://graph.facebook.com/${API_VERSION}`;
+  }
+
+  async requestWithRetry(endpoint, method = 'GET', body = null) {
+    let lastResult;
+    for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
+      lastResult = await this.request(endpoint, method, body);
+      if (lastResult.success) return lastResult;
+      const status = lastResult.error?.status;
+      if (!RETRYABLE_STATUSES.has(status) || attempt === RETRY_DELAYS.length) break;
+      await new Promise((r) => setTimeout(r, RETRY_DELAYS[attempt]));
+    }
+    return lastResult;
   }
 
   async request(endpoint, method = 'GET', body = null) {
@@ -85,10 +103,32 @@ class MetaAPI {
     }
   }
 
+  async requestAllPages(endpoint) {
+    const firstResult = await this.requestWithRetry(endpoint);
+    if (!firstResult.success) return firstResult;
+
+    const allData = [...(firstResult.data.data || [])];
+    let nextUrl = firstResult.data.paging?.next;
+
+    while (nextUrl && allData.length < MAX_PAGINATED_RECORDS) {
+      try {
+        const response = await fetch(nextUrl);
+        const data = await response.json();
+        if (data.error) break;
+        allData.push(...(data.data || []));
+        nextUrl = data.paging?.next;
+      } catch {
+        break;
+      }
+    }
+
+    return { success: true, data: { data: allData }, error: null };
+  }
+
   // ── Ad Accounts ──────────────────────────────────────────
 
   async getAdAccounts() {
-    return this.request(
+    return this.requestWithRetry(
       '/me/adaccounts?fields=account_id,name,currency,timezone_name,spend_cap,account_status,business'
     );
   }
@@ -97,49 +137,49 @@ class MetaAPI {
 
   async getCampaigns(accountId, fields) {
     const f = fields || 'id,name,objective,status,daily_budget,lifetime_budget,budget_remaining,start_time,stop_time,created_time,updated_time';
-    return this.request(`/${accountId}/campaigns?fields=${f}&limit=500`);
+    return this.requestAllPages(`/${accountId}/campaigns?fields=${f}&limit=500`);
   }
 
   async createCampaign(accountId, params) {
-    return this.request(`/${accountId}/campaigns`, 'POST', params);
+    return this.requestWithRetry(`/${accountId}/campaigns`, 'POST', params);
   }
 
   async updateCampaign(campaignId, params) {
-    return this.request(`/${campaignId}`, 'POST', params);
+    return this.requestWithRetry(`/${campaignId}`, 'POST', params);
   }
 
   async deleteCampaign(campaignId) {
-    return this.request(`/${campaignId}`, 'POST', { status: 'DELETED' });
+    return this.requestWithRetry(`/${campaignId}`, 'POST', { status: 'DELETED' });
   }
 
   // ── Ad Sets ──────────────────────────────────────────────
 
   async getAdSets(campaignId, fields) {
     const f = fields || 'id,name,status,daily_budget,lifetime_budget,targeting,billing_event,optimization_goal,bid_amount,start_time,end_time,created_time';
-    return this.request(`/${campaignId}/adsets?fields=${f}&limit=500`);
+    return this.requestAllPages(`/${campaignId}/adsets?fields=${f}&limit=500`);
   }
 
   async createAdSet(accountId, params) {
-    return this.request(`/${accountId}/adsets`, 'POST', params);
+    return this.requestWithRetry(`/${accountId}/adsets`, 'POST', params);
   }
 
   async updateAdSet(adSetId, params) {
-    return this.request(`/${adSetId}`, 'POST', params);
+    return this.requestWithRetry(`/${adSetId}`, 'POST', params);
   }
 
   // ── Ads ──────────────────────────────────────────────────
 
   async getAds(adSetId, fields) {
     const f = fields || 'id,name,status,creative,created_time,updated_time';
-    return this.request(`/${adSetId}/ads?fields=${f}&limit=500`);
+    return this.requestAllPages(`/${adSetId}/ads?fields=${f}&limit=500`);
   }
 
   async createAd(accountId, params) {
-    return this.request(`/${accountId}/ads`, 'POST', params);
+    return this.requestWithRetry(`/${accountId}/ads`, 'POST', params);
   }
 
   async updateAd(adId, params) {
-    return this.request(`/${adId}`, 'POST', params);
+    return this.requestWithRetry(`/${adId}`, 'POST', params);
   }
 
   // ── Insights ─────────────────────────────────────────────
@@ -154,31 +194,30 @@ class MetaAPI {
     if (params.limit) qs.set('limit', params.limit);
     qs.set('time_increment', params.time_increment || '1');
 
-    return this.request(`/${objectId}/insights?${qs.toString()}`);
+    return this.requestWithRetry(`/${objectId}/insights?${qs.toString()}`);
   }
 
   // ── Audiences ────────────────────────────────────────────
 
   async getCustomAudiences(accountId) {
-    return this.request(
+    return this.requestAllPages(
       `/${accountId}/customaudiences?fields=id,name,subtype,approximate_count,delivery_status,operation_status,time_created,time_updated&limit=500`
     );
   }
 
   async createCustomAudience(accountId, params) {
-    return this.request(`/${accountId}/customaudiences`, 'POST', params);
+    return this.requestWithRetry(`/${accountId}/customaudiences`, 'POST', params);
   }
 
   async createLookalikeAudience(accountId, params) {
-    return this.request(`/${accountId}/customaudiences`, 'POST', {
+    return this.requestWithRetry(`/${accountId}/customaudiences`, 'POST', {
       subtype: 'LOOKALIKE',
       ...params,
     });
   }
 
   async getAudienceOverlap(audienceId1, audienceId2) {
-    // Uses the delivery_estimate endpoint to get audience overlap information
-    return this.request(
+    return this.requestWithRetry(
       `/${audienceId1}/delivery_estimate?targeting_spec=${encodeURIComponent(
         JSON.stringify({ custom_audiences: [{ id: audienceId2 }] })
       )}&optimization_goal=REACH`
@@ -188,19 +227,19 @@ class MetaAPI {
   // ── Pixels ───────────────────────────────────────────────
 
   async getPixels(accountId) {
-    return this.request(
+    return this.requestWithRetry(
       `/${accountId}/adspixels?fields=id,name,code,creation_time,is_unavailable,last_fired_time,owner_ad_account`
     );
   }
 
   async getPixelStats(pixelId) {
-    return this.request(
+    return this.requestWithRetry(
       `/${pixelId}/stats?aggregation=event&start_time=${Math.floor(Date.now() / 1000) - 86400 * 7}`
     );
   }
 
   async getPixelEvents(pixelId) {
-    return this.request(
+    return this.requestWithRetry(
       `/${pixelId}/recent_events?fields=event_name,event_time,event_count`
     );
   }
@@ -208,25 +247,15 @@ class MetaAPI {
   // ── Creative / Media ─────────────────────────────────────
 
   async uploadImage(accountId, imageBuffer) {
-    const FormData = require('form-data') || null;
-    // For image upload we need multipart form
-    const formData = new (require('node-fetch').FormData || (() => {
-      // Fallback: encode as base64 and use bytes parameter
-      return null;
-    }))();
-
-    // Use the bytes approach which is simpler
     const base64 = imageBuffer.toString('base64');
-    return this.request(`/${accountId}/adimages`, 'POST', {
+    return this.requestWithRetry(`/${accountId}/adimages`, 'POST', {
       bytes: base64,
     });
   }
 
   async uploadVideo(accountId, videoBuffer) {
-    // Video upload uses a chunked upload protocol.
-    // For simplicity, use the small-file approach (< 1GB):
     const base64 = videoBuffer.toString('base64');
-    return this.request(`/${accountId}/advideos`, 'POST', {
+    return this.requestWithRetry(`/${accountId}/advideos`, 'POST', {
       source: base64,
     });
   }

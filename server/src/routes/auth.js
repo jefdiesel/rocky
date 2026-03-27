@@ -7,7 +7,8 @@ const { verifyToken } = require('../middleware/auth');
 
 const router = Router();
 
-const META_API = 'https://graph.facebook.com/v19.0';
+const META_API_VERSION = process.env.META_API_VERSION || 'v21.0';
+const META_API = `https://graph.facebook.com/${META_API_VERSION}`;
 const SCOPES = 'ads_management,ads_read,pages_read_engagement,business_management';
 
 // ── GET /auth/meta — Redirect to Meta OAuth ──────────────────────────────────
@@ -25,7 +26,7 @@ router.get('/meta', (req, res) => {
 
   const redirectUri = process.env.META_REDIRECT_URI || 'http://localhost:3001/api/auth/meta/callback';
 
-  const url = new URL('https://www.facebook.com/v19.0/dialog/oauth');
+  const url = new URL(`https://www.facebook.com/${META_API_VERSION}/dialog/oauth`);
   url.searchParams.set('client_id', appId);
   url.searchParams.set('redirect_uri', redirectUri);
   url.searchParams.set('scope', SCOPES);
@@ -204,6 +205,134 @@ router.post('/system-token', async (req, res) => {
   } catch (err) {
     console.error('[auth] system-token error:', err);
     return res.status(500).json({ error: 'Internal error storing system token.' });
+  }
+});
+
+// ── GET /auth/tiktok — Redirect to TikTok Business OAuth ─────────────────────
+router.get('/tiktok', (req, res) => {
+  const appId = process.env.TIKTOK_APP_ID;
+  if (!appId) {
+    return res.status(503).json({ error: 'TikTok OAuth is not configured (TIKTOK_APP_ID missing).' });
+  }
+
+  const redirectUri = process.env.TIKTOK_REDIRECT_URI || 'http://localhost:3001/api/auth/tiktok/callback';
+  const state = crypto.createHmac('sha256', process.env.TIKTOK_APP_SECRET || '')
+    .update(appId)
+    .digest('hex')
+    .slice(0, 32);
+
+  const url = new URL('https://business-api.tiktok.com/portal/auth');
+  url.searchParams.set('app_id', appId);
+  url.searchParams.set('redirect_uri', redirectUri);
+  url.searchParams.set('state', state);
+
+  return res.redirect(url.toString());
+});
+
+// ── GET /auth/tiktok/callback — Exchange code for TikTok access token ────────
+router.get('/tiktok/callback', async (req, res) => {
+  try {
+    const { auth_code, state } = req.query;
+
+    if (!auth_code) {
+      return res.status(400).json({ error: 'Missing authorization code from TikTok.' });
+    }
+
+    const appId = process.env.TIKTOK_APP_ID;
+    const appSecret = process.env.TIKTOK_APP_SECRET;
+
+    const expectedState = crypto.createHmac('sha256', appSecret || '')
+      .update(appId || '')
+      .digest('hex')
+      .slice(0, 32);
+
+    if (state !== expectedState) {
+      const clientUrl = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+      return res.redirect(`${clientUrl}/auth/callback?error=CSRF+state+mismatch.+Please+try+again.`);
+    }
+
+    // Exchange auth_code for access token
+    const tokenRes = await fetch('https://business-api.tiktok.com/open_api/v1.3/oauth2/access_token/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        app_id: appId,
+        secret: appSecret,
+        auth_code,
+      }),
+    });
+    const tokenData = await tokenRes.json();
+
+    if (tokenData.code !== 0 || !tokenData.data?.access_token) {
+      console.error('[auth] TikTok token exchange error:', tokenData);
+      return res.status(401).json({ error: 'Failed to exchange TikTok authorization code.' });
+    }
+
+    const ttAccessToken = tokenData.data.access_token;
+    const ttAdvertiserIds = tokenData.data.advertiser_ids || [];
+
+    if (!supabase) {
+      return res.status(503).json({ error: 'Database unavailable.' });
+    }
+
+    // Look up existing user by session or create new
+    const sessionHeader = req.headers.authorization;
+    let userId = null;
+
+    if (sessionHeader && sessionHeader.startsWith('Bearer ')) {
+      const existingToken = sessionHeader.slice(7);
+      const { data: existingUser } = await supabase
+        .from('users')
+        .select('id')
+        .eq('session_token', existingToken)
+        .single();
+      if (existingUser) userId = existingUser.id;
+    }
+
+    const sessionToken = crypto.randomBytes(48).toString('hex');
+    const sessionExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+    if (userId) {
+      // Update existing user with TikTok token
+      await supabase
+        .from('users')
+        .update({
+          tiktok_access_token: encrypt(ttAccessToken),
+          tiktok_user_id: ttAdvertiserIds[0] || null,
+          session_token: sessionToken,
+          session_expiry: sessionExpiry.toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', userId);
+    } else {
+      // Create new user for TikTok-only auth
+      const { data: newUser, error: insertErr } = await supabase
+        .from('users')
+        .upsert(
+          {
+            tiktok_user_id: ttAdvertiserIds[0] || `tt_${Date.now()}`,
+            name: 'TikTok User',
+            tiktok_access_token: encrypt(ttAccessToken),
+            session_token: sessionToken,
+            session_expiry: sessionExpiry.toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'tiktok_user_id', ignoreDuplicates: false }
+        )
+        .select()
+        .single();
+
+      if (insertErr) {
+        console.error('[auth] TikTok user upsert error:', insertErr);
+        return res.status(500).json({ error: 'Failed to save TikTok session.' });
+      }
+    }
+
+    const clientUrl = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+    return res.redirect(`${clientUrl}/auth/callback?token=${sessionToken}&platform=tiktok`);
+  } catch (err) {
+    console.error('[auth] TikTok callback error:', err);
+    return res.status(500).json({ error: 'Internal error during TikTok authentication.' });
   }
 });
 

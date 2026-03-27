@@ -101,7 +101,7 @@ export default function Campaigns() {
       key: 'actions', label: 'Actions', width: '80px',
       render: (_, row) => (
         <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-          <button onClick={() => navigate(`/campaigns/new?edit=${row.id}`)} className="rounded p-1 text-zinc-500 hover:bg-zinc-700 hover:text-zinc-300" title="Edit">
+          <button onClick={() => navigate(`/campaigns/${row.id}/edit`)} className="rounded p-1 text-zinc-500 hover:bg-zinc-700 hover:text-zinc-300" title="Edit">
             <Edit size={13} />
           </button>
           <button

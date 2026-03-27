@@ -1,0 +1,192 @@
+[
+  {
+    "campaign_id": "tt_camp_001",
+    "campaign_name": "Spring Sale - Traffic",
+    "advertiser_id": "7200001000000",
+    "objective_type": "TRAFFIC",
+    "operation_status": "ENABLE",
+    "budget_mode": "BUDGET_MODE_DAY",
+    "budget": 150.00,
+    "create_time": "2026-02-01T10:00:00Z",
+    "modify_time": "2026-03-15T08:00:00Z",
+    "spend": 2840.50,
+    "impressions": 485000,
+    "clicks": 12400,
+    "conversions": 340,
+    "ctr": 2.56,
+    "cpc": 0.23,
+    "cpa": 8.35,
+    "ad_groups": [
+      {
+        "adgroup_id": "tt_ag_001",
+        "adgroup_name": "Interest - Fashion 18-34",
+        "operation_status": "ENABLE",
+        "budget": 75.00,
+        "spend": 1420.00,
+        "impressions": 242000,
+        "clicks": 6200,
+        "ads": [
+          {
+            "ad_id": "tt_ad_001",
+            "ad_name": "Spark Ad - UGC Review",
+            "operation_status": "ENABLE",
+            "spend": 720.00,
+            "impressions": 121000,
+            "clicks": 3100
+          },
+          {
+            "ad_id": "tt_ad_002",
+            "ad_name": "In-Feed - Product Showcase",
+            "operation_status": "ENABLE",
+            "spend": 700.00,
+            "impressions": 121000,
+            "clicks": 3100
+          }
+        ]
+      },
+      {
+        "adgroup_id": "tt_ag_002",
+        "adgroup_name": "Lookalike - Purchasers",
+        "operation_status": "ENABLE",
+        "budget": 75.00,
+        "spend": 1420.50,
+        "impressions": 243000,
+        "clicks": 6200,
+        "ads": [
+          {
+            "ad_id": "tt_ad_003",
+            "ad_name": "Video - Lifestyle",
+            "operation_status": "ENABLE",
+            "spend": 1420.50,
+            "impressions": 243000,
+            "clicks": 6200
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "campaign_id": "tt_camp_002",
+    "campaign_name": "App Install - iOS",
+    "advertiser_id": "7200001000000",
+    "objective_type": "APP_INSTALL",
+    "operation_status": "ENABLE",
+    "budget_mode": "BUDGET_MODE_DAY",
+    "budget": 200.00,
+    "create_time": "2026-02-15T12:00:00Z",
+    "modify_time": "2026-03-20T09:30:00Z",
+    "spend": 4120.00,
+    "impressions": 720000,
+    "clicks": 18500,
+    "conversions": 890,
+    "ctr": 2.57,
+    "cpc": 0.22,
+    "cpa": 4.63,
+    "ad_groups": [
+      {
+        "adgroup_id": "tt_ag_003",
+        "adgroup_name": "Broad - US 18-44",
+        "operation_status": "ENABLE",
+        "budget": 200.00,
+        "spend": 4120.00,
+        "impressions": 720000,
+        "clicks": 18500,
+        "ads": [
+          {
+            "ad_id": "tt_ad_004",
+            "ad_name": "Spark Ad - App Demo",
+            "operation_status": "ENABLE",
+            "spend": 2060.00,
+            "impressions": 360000,
+            "clicks": 9250
+          },
+          {
+            "ad_id": "tt_ad_005",
+            "ad_name": "Carousel - Features",
+            "operation_status": "DISABLE",
+            "spend": 2060.00,
+            "impressions": 360000,
+            "clicks": 9250
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "campaign_id": "tt_camp_003",
+    "campaign_name": "Brand Awareness - Reach",
+    "advertiser_id": "7200001000000",
+    "objective_type": "REACH",
+    "operation_status": "DISABLE",
+    "budget_mode": "BUDGET_MODE_TOTAL",
+    "budget": 5000.00,
+    "create_time": "2026-01-10T14:00:00Z",
+    "modify_time": "2026-03-01T16:00:00Z",
+    "spend": 4800.00,
+    "impressions": 1200000,
+    "clicks": 24000,
+    "conversions": 0,
+    "ctr": 2.00,
+    "cpc": 0.20,
+    "cpa": 0,
+    "ad_groups": []
+  },
+  {
+    "campaign_id": "tt_camp_004",
+    "campaign_name": "Lead Gen - Webinar",
+    "advertiser_id": "7200001000000",
+    "objective_type": "LEAD_GENERATION",
+    "operation_status": "ENABLE",
+    "budget_mode": "BUDGET_MODE_DAY",
+    "budget": 80.00,
+    "create_time": "2026-03-01T09:00:00Z",
+    "modify_time": "2026-03-25T11:00:00Z",
+    "spend": 1600.00,
+    "impressions": 320000,
+    "clicks": 8000,
+    "conversions": 420,
+    "ctr": 2.50,
+    "cpc": 0.20,
+    "cpa": 3.81,
+    "ad_groups": [
+      {
+        "adgroup_id": "tt_ag_004",
+        "adgroup_name": "Interest - Business",
+        "operation_status": "ENABLE",
+        "budget": 80.00,
+        "spend": 1600.00,
+        "impressions": 320000,
+        "clicks": 8000,
+        "ads": [
+          {
+            "ad_id": "tt_ad_006",
+            "ad_name": "Lead Form - Webinar Signup",
+            "operation_status": "ENABLE",
+            "spend": 1600.00,
+            "impressions": 320000,
+            "clicks": 8000
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "campaign_id": "tt_camp_005",
+    "campaign_name": "Video Views - Product Launch",
+    "advertiser_id": "7200001000000",
+    "objective_type": "VIDEO_VIEWS",
+    "operation_status": "ENABLE",
+    "budget_mode": "BUDGET_MODE_DAY",
+    "budget": 120.00,
+    "create_time": "2026-03-10T08:00:00Z",
+    "modify_time": "2026-03-26T10:00:00Z",
+    "spend": 1920.00,
+    "impressions": 960000,
+    "clicks": 14400,
+    "conversions": 0,
+    "ctr": 1.50,
+    "cpc": 0.13,
+    "cpa": 0,
+    "ad_groups": []
+  }
+]

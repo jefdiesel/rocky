@@ -9,6 +9,7 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
 const mockMode = require('./middleware/mockMode');
+const tiktokMockMode = require('./middleware/tiktokMockMode');
 
 // ── Route imports ────────────────────────────────────────────────────────────
 const authRoutes = require('./routes/auth');
@@ -21,6 +22,13 @@ const creativeRoutes = require('./routes/creative');
 const utmRoutes = require('./routes/utm');
 const settingsRoutes = require('./routes/settings');
 const waitlistRoutes = require('./routes/waitlist');
+
+// TikTok routes
+const tiktokAccountRoutes = require('./routes/tiktok/accounts');
+const tiktokCampaignRoutes = require('./routes/tiktok/campaigns');
+const tiktokInsightRoutes = require('./routes/tiktok/insights');
+const tiktokAudienceRoutes = require('./routes/tiktok/audiences');
+const tiktokCreativeRoutes = require('./routes/tiktok/creative');
 
 const app = express();
 
@@ -50,8 +58,9 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// ── Mock mode (intercepts when META_APP_ID is not set) ───────────────────────
+// ── Mock mode (intercepts when META_APP_ID / TIKTOK_APP_ID is not set) ──────
 app.use('/api', mockMode);
+app.use('/api', tiktokMockMode);
 
 // ── Routes ───────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
@@ -65,9 +74,16 @@ app.use('/api/utm', utmRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/waitlist', waitlistRoutes);
 
+// TikTok routes
+app.use('/api/tiktok/accounts', tiktokAccountRoutes);
+app.use('/api/tiktok/campaigns', tiktokCampaignRoutes);
+app.use('/api/tiktok/insights', tiktokInsightRoutes);
+app.use('/api/tiktok/audiences', tiktokAudienceRoutes);
+app.use('/api/tiktok/creative', tiktokCreativeRoutes);
+
 // ── Health check ─────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', mock: !process.env.META_APP_ID });
+  res.json({ status: 'ok', mock_meta: !process.env.META_APP_ID, mock_tiktok: !process.env.TIKTOK_APP_ID });
 });
 
 // ── Serve frontend in production ─────────────────────────────────────────────
@@ -101,7 +117,10 @@ if (require.main === module) {
   app.listen(PORT, async () => {
     console.log(`[remi] Server listening on port ${PORT}`);
     if (!process.env.META_APP_ID) {
-      console.log('[remi] META_APP_ID not set — running in mock mode');
+      console.log('[remi] META_APP_ID not set — running Meta in mock mode');
+    }
+    if (!process.env.TIKTOK_APP_ID) {
+      console.log('[remi] TIKTOK_APP_ID not set — running TikTok in mock mode');
     }
 
     const supabase = require('./services/supabase');

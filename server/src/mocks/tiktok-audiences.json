@@ -1,0 +1,56 @@
+[
+  {
+    "custom_audience_id": "tt_aud_001",
+    "name": "Website Visitors - 30 Days",
+    "audience_type": "WEBSITE_CUSTOM",
+    "audience_sub_type": "WEBSITE",
+    "size": 185000,
+    "status": "AVAILABLE",
+    "create_time": "2026-01-15T10:00:00Z"
+  },
+  {
+    "custom_audience_id": "tt_aud_002",
+    "name": "App Event - Add to Cart",
+    "audience_type": "APP_CUSTOM",
+    "audience_sub_type": "APP_EVENT",
+    "size": 42000,
+    "status": "AVAILABLE",
+    "create_time": "2026-02-01T12:00:00Z"
+  },
+  {
+    "custom_audience_id": "tt_aud_003",
+    "name": "Customer List - Email Subscribers",
+    "audience_type": "CUSTOMER_FILE",
+    "audience_sub_type": "CUSTOMER_FILE",
+    "size": 95000,
+    "status": "AVAILABLE",
+    "create_time": "2026-02-10T09:00:00Z"
+  },
+  {
+    "custom_audience_id": "tt_aud_004",
+    "name": "Lookalike - Top Purchasers 1%",
+    "audience_type": "LOOKALIKE",
+    "audience_sub_type": "LOOKALIKE",
+    "size": 2400000,
+    "status": "AVAILABLE",
+    "create_time": "2026-02-20T14:00:00Z"
+  },
+  {
+    "custom_audience_id": "tt_aud_005",
+    "name": "Video Viewers - 75% Completion",
+    "audience_type": "ENGAGEMENT_CUSTOM",
+    "audience_sub_type": "VIDEO",
+    "size": 320000,
+    "status": "AVAILABLE",
+    "create_time": "2026-03-01T08:00:00Z"
+  },
+  {
+    "custom_audience_id": "tt_aud_006",
+    "name": "DMP Segment - High Intent",
+    "audience_type": "DMP",
+    "audience_sub_type": "DMP",
+    "size": 1800000,
+    "status": "AVAILABLE",
+    "create_time": "2026-03-10T11:00:00Z"
+  }
+]

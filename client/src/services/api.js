@@ -37,8 +37,9 @@ async function request(endpoint, options = {}) {
     let data;
     try { data = await response.json(); } catch { data = null; }
 
-    // Auto-redirect to re-auth on 401
+    // Auto-redirect to re-auth on 401 or expired Meta token
     if (response.status === 401 && token) {
+      const isMetaExpired = data?.code === 'META_TOKEN_EXPIRED';
       localStorage.removeItem('auth_token');
       localStorage.removeItem('meta_token');
       window.location.href = '/api/auth/meta';
@@ -159,6 +160,26 @@ export const api = {
     return request(`/campaigns/drafts/${id}`);
   },
   deleteDraft: (id) => request(`/campaigns/draft/${id}`, { method: 'DELETE' }),
+
+  // ── TikTok ──────────────────────────────────────────────────────────────────
+  tiktok: {
+    getAccounts: () => request('/tiktok/accounts'),
+    getCampaigns: (advertiserId) => request(`/tiktok/campaigns/${advertiserId}`),
+    createCampaign: (data) => request('/tiktok/campaigns', { method: 'POST', body: JSON.stringify(data) }),
+    updateCampaign: (id, data) => request(`/tiktok/campaigns/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    deleteCampaign: (id, data) => request(`/tiktok/campaigns/${id}`, { method: 'DELETE', body: JSON.stringify(data) }),
+    createAdGroup: (data) => request('/tiktok/campaigns/adgroups', { method: 'POST', body: JSON.stringify(data) }),
+    createAd: (data) => request('/tiktok/campaigns/ads', { method: 'POST', body: JSON.stringify(data) }),
+    getInsights: (advertiserId, params = {}) => {
+      const qs = new URLSearchParams(params).toString();
+      return request(`/tiktok/insights/${advertiserId}${qs ? `?${qs}` : ''}`);
+    },
+    getAudiences: (advertiserId) => request(`/tiktok/audiences/${advertiserId}`),
+    createAudience: (data) => request('/tiktok/audiences', { method: 'POST', body: JSON.stringify(data) }),
+    getCreatives: (advertiserId) => request(`/tiktok/creative/${advertiserId}`),
+    uploadImage: (data) => request('/tiktok/creative/upload/image', { method: 'POST', body: JSON.stringify(data) }),
+    uploadVideo: (data) => request('/tiktok/creative/upload/video', { method: 'POST', body: JSON.stringify(data) }),
+  },
 };
 
 export function isMockData(response) {

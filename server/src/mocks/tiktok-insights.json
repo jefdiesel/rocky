@@ -1,0 +1,26 @@
+{
+  "summary": {
+    "spend": 15280.50,
+    "impressions": 3685000,
+    "clicks": 77300,
+    "conversions": 1650,
+    "ctr": 2.10,
+    "cpc": 0.20,
+    "cpm": 4.15,
+    "cost_per_conversion": 9.26
+  },
+  "daily": [
+    { "date": "2026-03-20", "spend": 550.00, "impressions": 132000, "clicks": 2772, "conversions": 59 },
+    { "date": "2026-03-21", "spend": 548.00, "impressions": 131000, "clicks": 2751, "conversions": 58 },
+    { "date": "2026-03-22", "spend": 560.00, "impressions": 135000, "clicks": 2835, "conversions": 61 },
+    { "date": "2026-03-23", "spend": 520.00, "impressions": 128000, "clicks": 2688, "conversions": 55 },
+    { "date": "2026-03-24", "spend": 570.00, "impressions": 138000, "clicks": 2898, "conversions": 63 },
+    { "date": "2026-03-25", "spend": 565.00, "impressions": 136000, "clicks": 2856, "conversions": 62 },
+    { "date": "2026-03-26", "spend": 540.00, "impressions": 130000, "clicks": 2730, "conversions": 57 }
+  ],
+  "by_campaign": [
+    { "campaign_id": "tt_camp_001", "campaign_name": "Spring Sale - Traffic", "spend": 2840.50, "impressions": 485000, "clicks": 12400, "conversions": 340 },
+    { "campaign_id": "tt_camp_002", "campaign_name": "App Install - iOS", "spend": 4120.00, "impressions": 720000, "clicks": 18500, "conversions": 890 },
+    { "campaign_id": "tt_camp_004", "campaign_name": "Lead Gen - Webinar", "spend": 1600.00, "impressions": 320000, "clicks": 8000, "conversions": 420 }
+  ]
+}

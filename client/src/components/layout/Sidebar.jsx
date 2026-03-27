@@ -11,20 +11,34 @@ import {
   ChevronRight,
   Zap,
   X,
+  Sparkles,
 } from 'lucide-react';
 import clsx from 'clsx';
 
-const NAV_ITEMS = [
+const META_NAV = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/campaigns', icon: Megaphone, label: 'Campaigns' },
   { to: '/audiences', icon: Users, label: 'Audiences' },
   { to: '/creative', icon: Palette, label: 'Creative' },
+  { to: '/studio', icon: Sparkles, label: 'Creative Studio' },
   { to: '/pixels', icon: Activity, label: 'Pixels' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
-export default function Sidebar({ selectedAccount, sidebarOpen, setSidebarOpen }) {
+const TIKTOK_NAV = [
+  { to: '/tiktok/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/tiktok/campaigns', icon: Megaphone, label: 'Campaigns' },
+  { to: '/tiktok/audiences', icon: Users, label: 'Audiences' },
+  { to: '/tiktok/creative', icon: Palette, label: 'Creative' },
+  { to: '/studio', icon: Sparkles, label: 'Creative Studio' },
+  { to: '/tiktok/pixels', icon: Activity, label: 'Pixels' },
+  { to: '/settings', icon: Settings, label: 'Settings' },
+];
+
+export default function Sidebar({ selectedAccount, sidebarOpen, setSidebarOpen, platform }) {
   const [collapsed, setCollapsed] = useState(false);
+  const isTikTok = platform === 'tiktok';
+  const navItems = isTikTok ? TIKTOK_NAV : META_NAV;
 
   const sidebarContent = (
     <>
@@ -43,13 +57,23 @@ export default function Sidebar({ selectedAccount, sidebarOpen, setSidebarOpen }
         </button>
       </div>
 
+      {/* Platform indicator */}
+      {!collapsed && (
+        <div className={clsx(
+          'mx-2 mt-2 rounded-md px-2.5 py-1.5 text-center text-2xs font-semibold uppercase tracking-wider',
+          isTikTok ? 'bg-pink-500/10 text-pink-400' : 'bg-blue-500/10 text-blue-400'
+        )}>
+          {isTikTok ? 'TikTok Ads' : 'Meta Ads'}
+        </div>
+      )}
+
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-2">
-        {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
+        {navItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
-            end={to === '/'}
+            end={to === '/' || to === '/tiktok/dashboard'}
             onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               clsx(
@@ -69,8 +93,8 @@ export default function Sidebar({ selectedAccount, sidebarOpen, setSidebarOpen }
       {/* Account info */}
       {selectedAccount && !collapsed && (
         <div className="border-t border-zinc-800 px-3 py-3">
-          <p className="truncate text-2xs font-medium text-zinc-400">{selectedAccount.name}</p>
-          <p className="truncate text-2xs text-zinc-600">{selectedAccount.id}</p>
+          <p className="truncate text-2xs font-medium text-zinc-400">{selectedAccount.name || selectedAccount.advertiser_name}</p>
+          <p className="truncate text-2xs text-zinc-600">{selectedAccount.id || selectedAccount.advertiser_id}</p>
         </div>
       )}
 

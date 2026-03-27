@@ -1,0 +1,29 @@
+[
+  {
+    "advertiser_id": "7200001000000",
+    "advertiser_name": "Acme DTC - TikTok",
+    "currency": "USD",
+    "timezone": "America/New_York",
+    "status": "STATUS_ENABLE",
+    "balance": 5420.50,
+    "create_time": "2025-09-15T10:00:00Z"
+  },
+  {
+    "advertiser_id": "7200002000000",
+    "advertiser_name": "Brand X Performance",
+    "currency": "USD",
+    "timezone": "America/Los_Angeles",
+    "status": "STATUS_ENABLE",
+    "balance": 12800.00,
+    "create_time": "2025-11-01T08:30:00Z"
+  },
+  {
+    "advertiser_id": "7200003000000",
+    "advertiser_name": "Agency Client - EU",
+    "currency": "EUR",
+    "timezone": "Europe/Berlin",
+    "status": "STATUS_ENABLE",
+    "balance": 3200.75,
+    "create_time": "2026-01-10T14:00:00Z"
+  }
+]
