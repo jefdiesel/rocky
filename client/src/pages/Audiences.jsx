@@ -39,15 +39,9 @@ export default function Audiences() {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['audiences'],
     queryFn: async () => {
-      try {
-        const res = await api.getAudiences();
-        return res.data || [];
-      } catch (err) {
-        if (!isAuthenticated()) return getMockAudiences().data;
-        if (err.status === 401) throw err;
-        console.warn('[audiences]', err.message);
-        return [];
-      }
+      if (!isAuthenticated()) return getMockAudiences().data;
+      const res = await api.getAudiences();
+      return res.data || [];
     },
   });
 

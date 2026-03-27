@@ -74,15 +74,9 @@ export default function Creative() {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['creatives'],
     queryFn: async () => {
-      try {
-        const res = await api.getCreatives();
-        return res.data || res;
-      } catch (err) {
-        if (!isAuthenticated()) return getMockCreatives().data;
-        if (err.status === 401) throw err;
-        console.warn('[creatives]', err.message);
-        return [];
-      }
+      if (!isAuthenticated()) return getMockCreatives().data;
+      const res = await api.getCreatives();
+      return res.data || res;
     },
   });
 

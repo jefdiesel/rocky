@@ -1,4 +1,4 @@
-import { getToken, clearToken, isAuthenticated } from './auth.js';
+import { getToken, isAuthenticated } from './auth.js';
 
 const BASE_URL = '/api';
 
@@ -34,14 +34,6 @@ async function request(endpoint, options = {}) {
   if (!response.ok) {
     let data;
     try { data = await response.json(); } catch { data = null; }
-
-    // Only clear token on definitive session-dead errors from our server
-    if (response.status === 401 && token) {
-      const msg = data?.error || '';
-      if (msg.includes('Invalid session') || msg.includes('Session has expired')) {
-        clearToken();
-      }
-    }
 
     const message = data?.error || data?.message || getErrorMessage(response.status);
     throw new ApiError(message, response.status, data);

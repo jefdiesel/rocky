@@ -56,15 +56,9 @@ export default function Campaigns() {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['campaigns'],
     queryFn: async () => {
-      try {
-        const res = await api.getCampaigns();
-        return res.data || [];
-      } catch (err) {
-        if (!isAuthenticated()) return getMockCampaigns().data;
-        if (err.status === 401) throw err;
-        console.warn('[campaigns]', err.message);
-        return [];
-      }
+      if (!isAuthenticated()) return getMockCampaigns().data;
+      const res = await api.getCampaigns();
+      return res.data || [];
     },
   });
 

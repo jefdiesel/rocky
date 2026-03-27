@@ -13,14 +13,8 @@ import {
 
 function safeFetch(fn, mockFn) {
   return async () => {
-    try {
-      return await fn();
-    } catch (err) {
-      if (!isAuthenticated()) return mockFn();
-      if (err.status === 401) throw err;
-      console.warn('[insights]', err.message);
-      return { data: [] };
-    }
+    if (!isAuthenticated()) return mockFn();
+    return fn();
   };
 }
 

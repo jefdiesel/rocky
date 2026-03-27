@@ -44,15 +44,9 @@ export default function Pixels() {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['pixels'],
     queryFn: async () => {
-      try {
-        const res = await api.getPixels();
-        return res.data || res;
-      } catch (err) {
-        if (!isAuthenticated()) return getMockPixels().data;
-        if (err.status === 401) throw err;
-        console.warn('[pixels]', err.message);
-        return [];
-      }
+      if (!isAuthenticated()) return getMockPixels().data;
+      const res = await api.getPixels();
+      return res.data || res;
     },
   });
 
