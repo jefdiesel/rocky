@@ -44,8 +44,8 @@ export default function Dashboard() {
   }), { revenue: 0, profit: 0, cost: 0 });
   const blendedROI = rtTotals.cost > 0 ? ((rtTotals.revenue - rtTotals.cost) / rtTotals.cost) * 100 : 0;
 
-  const kpiCards = kpis ? [
-    { label: 'Total Spend', value: formatCurrency(kpis.spend), trend: kpis.spendTrend },
+  const metaKpis = kpis ? [
+    { label: 'Spend', value: formatCurrency(kpis.spend), trend: kpis.spendTrend },
     { label: 'Impressions', value: formatNumber(kpis.impressions), trend: kpis.impressionsTrend },
     { label: 'Reach', value: formatNumber(kpis.reach), trend: kpis.reachTrend },
     { label: 'CPM', value: formatCurrency(kpis.cpm), trend: kpis.cpmTrend },
@@ -54,10 +54,22 @@ export default function Dashboard() {
     { label: 'Conversions', value: formatNumber(kpis.conversions), trend: kpis.conversionsTrend },
     { label: 'CPA', value: formatCurrency(kpis.cpa), trend: kpis.cpaTrend },
     { label: 'ROAS', value: (kpis.roas != null ? kpis.roas.toFixed(2) : '0.00') + 'x', trend: kpis.roasTrend },
-    { label: 'Revenue', value: formatCurrency(rtTotals.revenue), trend: null },
-    { label: 'Profit', value: formatCurrency(rtTotals.profit), trend: null },
-    { label: 'ROI', value: blendedROI.toFixed(1) + '%', trend: null },
   ] : [];
+
+  const rtKpis = [
+    { label: 'Revenue', value: formatCurrency(rtTotals.revenue) },
+    { label: 'Cost', value: formatCurrency(rtTotals.cost) },
+    { label: 'Profit', value: formatCurrency(rtTotals.profit) },
+    { label: 'ROI', value: blendedROI.toFixed(1) + '%' },
+    { label: 'Clicks', value: formatNumber(rtData.reduce((a, c) => a + (c.clicks || 0), 0)) },
+    { label: 'Conversions', value: formatNumber(rtData.reduce((a, c) => a + (c.conversions || 0), 0)) },
+  ];
+
+  const handleRtSync = async () => {
+    setRtSyncing(true);
+    try { await api.syncRedtrack(); } catch {}
+    setRtSyncing(false);
+  };
 
   const breakdownColumns = [
     { key: 'name', accessor: 'name', label: 'Name', sortable: true },
@@ -114,12 +126,64 @@ export default function Dashboard() {
           'Pacing bars compare actual spend vs projected budget to catch over/underspend',
         ]}
       />
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9">
-        {kpisLoading
-          ? Array.from({ length: 9 }).map((_, i) => <KPICard key={i} loading />)
-          : kpiCards.map((kpi, i) => <KPICard key={i} {...kpi} />)
-        }
+      {/* KPI Panels — Meta + RedTrack side by side */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {/* Meta Ads Panel */}
+        <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="flex h-6 w-6 items-center justify-center rounded bg-blue-500/20">
+              <span className="text-xs font-bold text-blue-400">f</span>
+            </div>
+            <h3 className="text-xs font-semibold text-zinc-300">Meta Ads</h3>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {kpisLoading
+              ? Array.from({ length: 9 }).map((_, i) => <KPICard key={i} loading />)
+              : metaKpis.map((kpi, i) => <KPICard key={i} {...kpi} />)
+            }
+          </div>
+        </div>
+
+        {/* RedTrack Panel */}
+        <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="flex h-6 w-6 items-center justify-center rounded bg-purple-500/20">
+                <span className="text-xs font-bold text-purple-400">R</span>
+              </div>
+              <h3 className="text-xs font-semibold text-zinc-300">RedTrack Revenue</h3>
+            </div>
+            <button onClick={handleRtSync} disabled={rtSyncing}
+              className="flex items-center gap-1 rounded px-2 py-1 text-2xs text-zinc-500 hover:bg-zinc-700 hover:text-zinc-300">
+              <RefreshCw size={10} className={rtSyncing ? 'animate-spin' : ''} /> Sync
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {rtKpis.map((kpi, i) => <KPICard key={i} {...kpi} />)}
+          </div>
+          {rtData.length > 0 && (
+            <div className="mt-3 space-y-1.5">
+              {rtData.map((c) => (
+                <div key={c.campaign_id} className="flex items-center justify-between rounded bg-zinc-900/50 px-3 py-2">
+                  <span className="text-xs text-zinc-300 truncate max-w-[200px]">{c.campaign_name}</span>
+                  <div className="flex items-center gap-3 text-xs">
+                    <span className="text-zinc-400">${Number(c.revenue || 0).toFixed(2)}</span>
+                    <span className={clsx('font-medium',
+                      (c.roi || 0) > 40 ? 'text-emerald-400' : (c.roi || 0) > 0 ? 'text-amber-400' : 'text-red-400'
+                    )}>
+                      {Number(c.roi || 0).toFixed(1)}%
+                    </span>
+                    <span className="text-zinc-500">${Number(c.epc || 0).toFixed(2)} EPC</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="hidden">
+        {/* kept for grid compatibility */}
       </div>
 
       {/* Time Series Chart */}
