@@ -77,6 +77,7 @@ router.post('/campaigns', verifyToken, async (req, res) => {
     const result = await meta.createCampaign(account_id, params);
 
     if (!result.success) {
+      console.error('[campaigns] Meta API error:', JSON.stringify(result.error));
       return res.status(result.error.status || 502).json({ error: result.error.message });
     }
 

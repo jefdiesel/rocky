@@ -25,15 +25,22 @@ class MetaAPI {
       url.searchParams.set('access_token', this.accessToken);
     }
 
-    const options = {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-    };
+    const options = { method };
 
     if (body && method !== 'GET') {
-      // Always include access_token in body for non-GET
+      // Meta Marketing API expects form-urlencoded for POST
       const payload = { ...body, access_token: this.accessToken };
-      options.body = JSON.stringify(payload);
+      const params = new URLSearchParams();
+      for (const [key, value] of Object.entries(payload)) {
+        if (value === undefined || value === null) continue;
+        if (Array.isArray(value) || typeof value === 'object') {
+          params.set(key, JSON.stringify(value));
+        } else {
+          params.set(key, String(value));
+        }
+      }
+      options.headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+      options.body = params.toString();
     }
 
     try {
