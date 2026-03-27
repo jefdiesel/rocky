@@ -25,23 +25,37 @@ export function useAccounts() {
 
   const accounts = data || [];
 
+  // Always use the id field (has act_ prefix) which the Meta API requires
+  const getActId = (acc) => {
+    if (acc.id && acc.id.startsWith('act_')) return acc.id;
+    if (acc.account_id && acc.account_id.startsWith('act_')) return acc.account_id;
+    return acc.id ? `act_${acc.id}` : `act_${acc.account_id}`;
+  };
+
   useEffect(() => {
     if (accounts.length > 0) {
-      const match = accounts.find((a) => (a.account_id || a.id) === selectedAccountId);
+      // Fix stored ID if it's missing the act_ prefix
+      const fixedId = selectedAccountId && !selectedAccountId.startsWith('act_')
+        ? `act_${selectedAccountId}` : selectedAccountId;
+      const match = accounts.find((a) => getActId(a) === fixedId);
       if (!match) {
-        const firstId = accounts[0].account_id || accounts[0].id;
+        const firstId = getActId(accounts[0]);
         setSelectedAccountId(firstId);
         localStorage.setItem('selected_account_id', firstId);
+      } else if (fixedId !== selectedAccountId) {
+        setSelectedAccountId(fixedId);
+        localStorage.setItem('selected_account_id', fixedId);
       }
     }
   }, [accounts, selectedAccountId]);
 
   const selectAccount = useCallback((id) => {
-    setSelectedAccountId(id);
-    localStorage.setItem('selected_account_id', id);
+    const actId = id && !id.startsWith('act_') ? `act_${id}` : id;
+    setSelectedAccountId(actId);
+    localStorage.setItem('selected_account_id', actId);
   }, []);
 
-  const selectedAccount = accounts.find((a) => (a.account_id || a.id) === selectedAccountId) || accounts[0] || null;
+  const selectedAccount = accounts.find((a) => getActId(a) === selectedAccountId) || accounts[0] || null;
 
   return {
     accounts,
