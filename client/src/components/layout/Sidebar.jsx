@@ -42,18 +42,25 @@ export default function Sidebar({ selectedAccount, sidebarOpen, setSidebarOpen, 
 
   const sidebarContent = (
     <>
-      {/* Brand */}
+      {/* Brand + collapse toggle */}
       <div className="flex h-12 items-center justify-between border-b border-zinc-800 px-4">
         <div className="flex items-center gap-2">
           <Zap size={20} className="flex-shrink-0 text-primary-500" />
           {!collapsed && <span className="text-sm font-bold tracking-tight text-zinc-100">Remi</span>}
         </div>
-        {/* Close button on mobile */}
+        {/* Mobile close */}
         <button
           onClick={() => setSidebarOpen(false)}
           className="md:hidden rounded p-1 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
         >
           <X size={18} />
+        </button>
+        {/* Desktop collapse */}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="hidden md:flex rounded p-1 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300 transition-colors"
+        >
+          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
       </div>
 
@@ -75,12 +82,14 @@ export default function Sidebar({ selectedAccount, sidebarOpen, setSidebarOpen, 
             to={to}
             end={to === '/' || to === '/tiktok/dashboard'}
             onClick={() => setSidebarOpen(false)}
+            title={collapsed ? label : undefined}
             className={({ isActive }) =>
               clsx(
                 'mx-2 mb-0.5 flex items-center gap-2.5 rounded-md px-2.5 py-2 text-xs font-medium transition-colors',
                 isActive
                   ? 'bg-primary-600/15 text-primary-400'
-                  : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
+                  : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200',
+                collapsed && 'justify-center'
               )
             }
           >
@@ -98,13 +107,6 @@ export default function Sidebar({ selectedAccount, sidebarOpen, setSidebarOpen, 
         </div>
       )}
 
-      {/* Collapse toggle - desktop only */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="hidden md:flex items-center justify-center border-t border-zinc-800 py-2.5 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300 transition-colors"
-      >
-        {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-      </button>
     </>
   );
 
