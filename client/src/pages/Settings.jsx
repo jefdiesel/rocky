@@ -129,7 +129,7 @@ export default function Settings() {
       {/* Connected Account */}
       <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-5">
         <h3 className="mb-4 text-sm font-semibold text-zinc-200">Connected Meta Account</h3>
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/15">
@@ -150,9 +150,9 @@ export default function Settings() {
           </div>
           <a
             href="/api/auth/meta"
-            className="flex items-center gap-1.5 rounded-md border border-zinc-700 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-700 transition-colors"
+            className="flex items-center gap-1.5 rounded-md bg-blue-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-400 transition-colors shadow-lg shadow-blue-500/25"
           >
-            <RefreshCw size={13} /> {authStatus?.connected ? 'Reconnect' : 'Connect Meta Account'}
+            <RefreshCw size={14} /> {authStatus?.connected ? 'Reconnect' : 'Connect Meta Account'}
           </a>
         </div>
       </div>
@@ -163,7 +163,7 @@ export default function Settings() {
         <p className="mb-4 text-2xs text-zinc-500">
           Enter your Meta System User access token for server-to-server API access.
         </p>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <input
             type="text"
             value={token}
@@ -194,7 +194,7 @@ export default function Settings() {
       {/* Default UTM Settings */}
       <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-5">
         <h3 className="mb-4 text-sm font-semibold text-zinc-200">Default UTM Parameters</h3>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {[
             { key: 'source', label: 'utm_source' },
             { key: 'medium', label: 'utm_medium' },

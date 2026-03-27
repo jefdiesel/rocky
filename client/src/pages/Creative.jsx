@@ -142,9 +142,9 @@ export default function Creative() {
       </div>
 
       {/* Asset Grid + Detail */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {/* Asset Grid */}
-        <div className="xl:col-span-2">
+        <div className="lg:col-span-2">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">Asset Library</h3>
           {isLoading ? (
             <div className="flex h-48 items-center justify-center"><LoadingSpinner /></div>

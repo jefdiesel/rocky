@@ -152,7 +152,7 @@ export default function Audiences() {
         ]}
       />
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-lg font-semibold text-zinc-100">Audiences</h1>
         <button
           onClick={() => setCreateOpen(true)}
@@ -181,7 +181,7 @@ export default function Audiences() {
         </button>
         {lookalikeOpen && (
           <div className="border-t border-zinc-700 px-4 py-4 space-y-4">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
                 <label className="mb-1 block text-2xs text-zinc-500">Source Audience</label>
                 <select value={lookalikeSource} onChange={(e) => setLookalikeSource(e.target.value)} className="w-full">
@@ -235,7 +235,7 @@ export default function Audiences() {
       {/* Overlap Tool */}
       <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-4">
         <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">Audience Overlap Tool</h3>
-        <div className="flex items-end gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <div className="flex-1">
             <label className="mb-1 block text-2xs text-zinc-500">Audience A</label>
             <select value={overlapA} onChange={(e) => setOverlapA(e.target.value)} className="w-full">

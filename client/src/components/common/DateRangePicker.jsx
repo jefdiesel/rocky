@@ -26,8 +26,8 @@ export default function DateRangePicker({ preset, dates, onPresetChange, onCusto
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-600 hover:text-zinc-100 transition-colors"
       >
-        <Calendar size={13} className="text-zinc-500" />
-        <span className="max-w-[180px] truncate">{displayText}</span>
+        <Calendar size={13} className="text-zinc-500 flex-shrink-0" />
+        <span className="hidden sm:inline max-w-[180px] truncate">{displayText}</span>
         <ChevronDown size={13} className={clsx('text-zinc-500 transition-transform', open && 'rotate-180')} />
       </button>
 

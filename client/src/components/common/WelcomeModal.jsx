@@ -60,7 +60,7 @@ export default function WelcomeModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="relative mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-zinc-700 bg-zinc-900 shadow-2xl">
+      <div className="relative mx-2 sm:mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-zinc-700 bg-zinc-900 shadow-2xl">
         <button onClick={dismiss} className="absolute right-4 top-4 text-zinc-500 hover:text-zinc-300 z-10">
           <X size={18} />
         </button>
@@ -68,7 +68,7 @@ export default function WelcomeModal() {
         {page === 0 ? (
           <>
             {/* Welcome Page */}
-            <div className="px-8 pb-4 pt-8">
+            <div className="px-4 pb-4 pt-6 sm:px-8 sm:pt-8">
               <div className="mb-4 flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
                   <Megaphone size={16} className="text-white" />
@@ -82,7 +82,7 @@ export default function WelcomeModal() {
             </div>
 
             {/* How it works */}
-            <div className="px-8 py-4">
+            <div className="px-4 py-4 sm:px-8">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">How it works</p>
               <div className="space-y-4">
                 {STEPS.map(({ title, desc, icon: Icon }, i) => (
@@ -100,8 +100,8 @@ export default function WelcomeModal() {
             </div>
 
             {/* CTA */}
-            <div className="border-t border-zinc-800 px-8 py-5">
-              <div className="flex items-center justify-between">
+            <div className="border-t border-zinc-800 px-4 py-5 sm:px-8">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <button
                   onClick={() => setPage(1)}
                   className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
@@ -120,12 +120,12 @@ export default function WelcomeModal() {
         ) : (
           <>
             {/* Features Page */}
-            <div className="px-8 pb-2 pt-8">
+            <div className="px-4 pb-2 pt-6 sm:px-8 sm:pt-8">
               <h2 className="text-lg font-bold text-zinc-100">Everything you need to run ads</h2>
               <p className="mt-1 text-sm text-zinc-400">All powered by the official Meta Marketing API.</p>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 px-8 py-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 px-4 py-4 sm:grid-cols-2 sm:px-8">
               {FEATURES.map(({ icon: Icon, title, desc }) => (
                 <div key={title} className="flex gap-3 rounded-lg border border-zinc-800 bg-zinc-800/30 p-3">
                   <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-zinc-800">
@@ -139,8 +139,8 @@ export default function WelcomeModal() {
               ))}
             </div>
 
-            <div className="border-t border-zinc-800 px-8 py-5">
-              <div className="flex items-center justify-between">
+            <div className="border-t border-zinc-800 px-4 py-5 sm:px-8">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <button
                   onClick={() => setPage(0)}
                   className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"

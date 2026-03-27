@@ -82,7 +82,7 @@ export default function Dashboard() {
         ]}
       />
       {/* KPI Cards */}
-      <div className="grid grid-cols-3 gap-3 lg:grid-cols-5 xl:grid-cols-9">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9">
         {kpisLoading
           ? Array.from({ length: 9 }).map((_, i) => <KPICard key={i} loading />)
           : kpiCards.map((kpi, i) => <KPICard key={i} {...kpi} />)

@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Bell, User, ChevronDown, LogOut, RefreshCw } from 'lucide-react';
+import { Bell, User, ChevronDown, LogOut, RefreshCw, Menu } from 'lucide-react';
 import clsx from 'clsx';
 import DateRangePicker from '../common/DateRangePicker.jsx';
 import api from '../../services/api.js';
 
-export default function TopBar({ accounts, selectedAccount, onSelectAccount, dateRange }) {
+export default function TopBar({ accounts, selectedAccount, onSelectAccount, dateRange, onMenuToggle }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [accountOpen, setAccountOpen] = useState(false);
@@ -56,9 +56,16 @@ export default function TopBar({ accounts, selectedAccount, onSelectAccount, dat
   }, []);
 
   return (
-    <header className="flex h-12 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4">
-      {/* Left: Account Switcher */}
-      <div className="relative" ref={accountRef}>
+    <header className="flex h-12 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-2 md:px-4">
+      {/* Left: Hamburger + Account Switcher */}
+      <div className="flex items-center gap-1 min-w-0">
+        <button
+          onClick={onMenuToggle}
+          className="md:hidden rounded-md p-2 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors flex-shrink-0"
+        >
+          <Menu size={18} />
+        </button>
+      <div className="relative min-w-0" ref={accountRef}>
         <button
           onClick={() => setAccountOpen(!accountOpen)}
           className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 transition-colors"
@@ -66,7 +73,7 @@ export default function TopBar({ accounts, selectedAccount, onSelectAccount, dat
           <div className="flex h-5 w-5 items-center justify-center rounded bg-primary-600 text-2xs font-bold text-white">
             {selectedAccount?.name?.charAt(0) || 'R'}
           </div>
-          <span className="max-w-[200px] truncate font-medium">{selectedAccount?.name || 'Select account'}</span>
+          <span className="max-w-[100px] md:max-w-[200px] truncate font-medium">{selectedAccount?.name || 'Select account'}</span>
           <ChevronDown size={13} className={clsx('text-zinc-500 transition-transform', accountOpen && 'rotate-180')} />
         </button>
         {accountOpen && (
@@ -91,6 +98,7 @@ export default function TopBar({ accounts, selectedAccount, onSelectAccount, dat
             ))}
           </div>
         )}
+      </div>
       </div>
 
       {/* Right: Date picker, notifications, user */}

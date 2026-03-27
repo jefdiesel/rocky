@@ -80,7 +80,7 @@ export default function DataTable({
 
   if (loading) {
     return (
-      <div className="overflow-hidden rounded-lg border border-zinc-700/50">
+      <div className="overflow-x-auto rounded-lg border border-zinc-700/50">
         <table className="table-dense w-full">
           <thead>
             <tr className="border-b border-zinc-700/50 bg-zinc-800/50">

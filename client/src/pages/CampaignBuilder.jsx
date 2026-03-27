@@ -230,7 +230,7 @@ export default function CampaignBuilder() {
       </div>
 
       {/* Stepper */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 overflow-x-auto pb-1">
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center gap-1">
             <button
@@ -358,7 +358,7 @@ export default function CampaignBuilder() {
                   </label>
                 ))}
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500">$</span>
                   <input
@@ -422,7 +422,7 @@ export default function CampaignBuilder() {
                 ))}
               </div>
               {state.placementMode === 'MANUAL' && (
-                <div className="grid grid-cols-2 gap-4 rounded-lg border border-zinc-700 bg-zinc-900/50 p-4">
+                <div className="grid grid-cols-1 gap-4 rounded-lg border border-zinc-700 bg-zinc-900/50 p-4 sm:grid-cols-2">
                   {Object.entries(PLACEMENTS).map(([platform, items]) => (
                     <div key={platform}>
                       <p className="mb-2 text-xs font-semibold capitalize text-zinc-300">{platform.replace('_', ' ')}</p>
@@ -446,7 +446,7 @@ export default function CampaignBuilder() {
             </div>
 
             {/* Optimization & Attribution */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-1.5 block text-xs font-medium text-zinc-400">Optimization Goal</label>
                 <select value={state.optimizationGoal} onChange={(e) => set('optimizationGoal', e.target.value)} className="w-full">
@@ -477,7 +477,7 @@ export default function CampaignBuilder() {
               <label className="mb-3 block text-sm font-medium text-zinc-300">Audience Targeting</label>
 
               {/* Age & Gender */}
-              <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
                 <div>
                   <label className="mb-1 block text-2xs text-zinc-500">Age Range</label>
                   <div className="flex items-center gap-2">
@@ -588,7 +588,7 @@ export default function CampaignBuilder() {
             {/* Format Selector */}
             <div>
               <label className="mb-2 block text-xs font-medium text-zinc-400">Ad Format</label>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {AD_FORMATS.map(({ value, label }) => {
                   const Icon = FORMAT_ICONS[value] || Image;
                   return (
@@ -610,7 +610,7 @@ export default function CampaignBuilder() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {/* Left: Copy fields */}
               <div className="space-y-4">
                 {/* Upload */}
@@ -789,7 +789,7 @@ export default function CampaignBuilder() {
                     </button>
                   ))}
                 </div>
-                <div className="phone-frame mx-auto">
+                <div className="phone-frame mx-auto scale-90 origin-top sm:scale-100">
                   <div className="phone-frame-content">
                     {state.previewMode === 'ig_stories' ? (
                       // Stories preview
@@ -857,7 +857,7 @@ export default function CampaignBuilder() {
             {/* Campaign Summary */}
             <div>
               <h3 className="mb-3 text-sm font-semibold text-zinc-200">Campaign</h3>
-              <dl className="grid grid-cols-2 gap-x-8 gap-y-2">
+              <dl className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2">
                 <dt className="text-xs text-zinc-500">Name</dt>
                 <dd className="text-xs text-zinc-200">{state.name}</dd>
                 <dt className="text-xs text-zinc-500">Objective</dt>
@@ -876,7 +876,7 @@ export default function CampaignBuilder() {
             {/* Ad Set Summary */}
             <div className="border-t border-zinc-700 pt-4">
               <h3 className="mb-3 text-sm font-semibold text-zinc-200">Ad Set</h3>
-              <dl className="grid grid-cols-2 gap-x-8 gap-y-2">
+              <dl className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2">
                 <dt className="text-xs text-zinc-500">Budget</dt>
                 <dd className="text-xs text-zinc-200">${state.budgetAmount} {state.budgetType.toLowerCase()}</dd>
                 <dt className="text-xs text-zinc-500">Schedule</dt>
@@ -910,7 +910,7 @@ export default function CampaignBuilder() {
             {/* Ad Summary */}
             <div className="border-t border-zinc-700 pt-4">
               <h3 className="mb-3 text-sm font-semibold text-zinc-200">Ad Creative</h3>
-              <dl className="grid grid-cols-2 gap-x-8 gap-y-2">
+              <dl className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2">
                 <dt className="text-xs text-zinc-500">Format</dt>
                 <dd className="text-xs text-zinc-200">{AD_FORMATS.find((f) => f.value === state.adFormat)?.label}</dd>
                 <dt className="text-xs text-zinc-500">Headline</dt>
@@ -941,7 +941,7 @@ export default function CampaignBuilder() {
       </div>
 
       {/* Footer Navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <button
           onClick={() => step > 0 ? setStep(step - 1) : navigate('/campaigns')}
           className="flex items-center gap-1 rounded-md border border-zinc-700 px-4 py-2 text-xs font-medium text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"
