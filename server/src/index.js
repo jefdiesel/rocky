@@ -43,7 +43,8 @@ app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false,
 }));
-app.use(morgan('dev'));
+// morgan compiles its format with new Function(), which Workers forbids; Workers logs requests itself.
+if (globalThis.navigator?.userAgent !== 'Cloudflare-Workers') app.use(morgan('dev'));
 app.use(cors({
   origin: process.env.CLIENT_ORIGIN
     ? process.env.CLIENT_ORIGIN.split(',').map(s => s.trim())
