@@ -3,12 +3,12 @@ const path = require('path');
 const mocksDir = path.join(__dirname, '..', 'mocks');
 
 const mockFiles = {
-  accounts: require(path.join(mocksDir, 'accounts.json')),
-  campaigns: require(path.join(mocksDir, 'campaigns.json')),
-  insights: require(path.join(mocksDir, 'insights.json')),
-  audiences: require(path.join(mocksDir, 'audiences.json')),
-  pixels: require(path.join(mocksDir, 'pixels.json')),
-  creative: require(path.join(mocksDir, 'creative.json')),
+  accounts: require('../mocks/accounts.json'),
+  campaigns: require('../mocks/campaigns.json'),
+  insights: require('../mocks/insights.json'),
+  audiences: require('../mocks/audiences.json'),
+  pixels: require('../mocks/pixels.json'),
+  creative: require('../mocks/creative.json'),
 };
 
 /**

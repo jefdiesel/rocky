@@ -3,11 +3,11 @@ const path = require('path');
 const mocksDir = path.join(__dirname, '..', 'mocks');
 
 const mockFiles = {
-  accounts: require(path.join(mocksDir, 'tiktok-accounts.json')),
-  campaigns: require(path.join(mocksDir, 'tiktok-campaigns.json')),
-  insights: require(path.join(mocksDir, 'tiktok-insights.json')),
-  audiences: require(path.join(mocksDir, 'tiktok-audiences.json')),
-  creative: require(path.join(mocksDir, 'tiktok-creative.json')),
+  accounts: require('../mocks/tiktok-accounts.json'),
+  campaigns: require('../mocks/tiktok-campaigns.json'),
+  insights: require('../mocks/tiktok-insights.json'),
+  audiences: require('../mocks/tiktok-audiences.json'),
+  creative: require('../mocks/tiktok-creative.json'),
 };
 
 /**
