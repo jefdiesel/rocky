@@ -10,6 +10,7 @@
     "vercel-install": "cd server && npm install"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "wrangler": "^4.149.0"
   }
 }
