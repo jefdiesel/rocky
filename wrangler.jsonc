@@ -8,6 +8,8 @@
   "preview_urls": false,
   "observability": { "enabled": true },
   "alias": { "node-fetch": "./node-fetch-shim.cjs" },
+  // CommonJS server code uses __dirname (dotenv path, client/dist check); not defined on Workers
+  "define": { "__dirname": "\"/bundle/server/src\"" },
   "assets": {
     "directory": "./client/dist",
     "binding": "ASSETS",
